@@ -2,6 +2,10 @@
 <!--
   Info.plist template for packaging FridaGadget.dylib as an iOS .framework bundle.
 
+  FALLBACK ONLY. The embedded gadget crashes at launch on iOS 26 (frida issue 3770). The working
+  path on iOS 26 is jailed spawn injection, see COMMANDS.md. Use this framework packaging only for an
+  older iOS 13 to 16 device where the embedded gadget still loads.
+
   Sideloadly's "Add Framework" injector copies the whole <Name>.framework folder into
   SoundCore.app/Frameworks/, adds the LC_LOAD_DYLIB load command, and re-signs it. Bundling the
   gadget this way lets the FridaGadget.config ride inside the framework so on_load:wait is honored.

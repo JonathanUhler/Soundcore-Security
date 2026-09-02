@@ -1,89 +1,108 @@
-# Frida Injection Command Sheet (iOS, Non Jailbroken)
+# Frida Instrumentation Command Sheet (iOS 26, Non Jailbroken)
 
-Operational steps to inject the Frida Gadget into the stable Soundcore IPA with Sideloadly, install
-it on the stock iPhone, and connect from the Mac. This backs the plan in
-`research/plans/2026-09-01_iOS-Frida-Injection/Problem-Statement.md`.
+Operational steps that actually worked to instrument the Soundcore app on a stock iPhone running
+iOS 26.5.1. The embedded Frida Gadget approach is a dead end on iOS 26, see section 0. The working
+method is jailed spawn injection. Frida launches the app under `debugserver` and injects its own
+agent, which is a different path from adding a gadget to the bundle.
 
-All commands run on the Mac. The iPhone stays connected over USB with the computer trusted.
+Background and the full diagnosis are in
+`research/notes/2026-09-01_iOS-Frida-Injection/Working-Injection-Flow.md`. All commands run on the
+Mac with the iPhone connected over USB and trusted. The test host was an Intel Mac with no Xcode.
 
-## 1. Install Frida Tools And Note The Version
+## 0. Why Not The Embedded Gadget
+
+The Frida Gadget added to `Frameworks/` crashes at launch on iOS 26 before any app code runs. The
+process dies with `EXC_BREAKPOINT`, `BRK #0x539`, inside the gadget's own dyld initializer. This is
+Frida issue 3770 and it is unresolved. Two things were ruled out along the way, the arm64e versus
+arm64 slice mismatch, which was real and fixed, and the app anti tamper SDK, which never got the
+chance to run. See the research note for the crash log analysis.
+
+The jailed spawn path below avoids the crash because Frida attaches `debugserver` first, which puts
+the process into a relaxed code signing state that is sticky, and only then loads the agent. The
+same gum code that trapped during a normal launch runs fine after code signing is relaxed.
+
+Keep the embedded recipe only as a fallback for an older iOS 13 to 16 device, where the gadget bug
+does not apply. The `FridaGadget-Info.plist` template in this directory supports that fallback.
+
+## 1. Install Tools And Confirm Versions
 
 ```bash
-python3 -m pip install --upgrade frida-tools
-frida --version          # record this, e.g. 17.2.4
+python3 -m pip install --upgrade frida-tools pymobiledevice3
+frida --version          # record this, e.g. 17.17.0
 ```
 
-The gadget dylib version MUST match this exactly. Version mismatch is the most common failure.
+`pymobiledevice3` mounts the developer image and creates the iOS 17+ tunnel without Xcode. The
+gadget placed in the cache in section 4 MUST match `frida --version` exactly.
 
-## 2. Fetch The Matching Gadget Dylib
+## 2. Sideload The Unmodified IPA
 
-From the Frida releases page, download the iOS universal gadget for the version above.
+Load `ipa/com.oceanwing.SoundCore_5.0.02_und3fined.ipa` in Sideloadly with an empty dylib and
+framework injection box. No gadget, no `FridaGadget.framework`. The free account re-sign adds the
+`get-task-allow` entitlement, which is the only thing needed here, because it makes the app
+debuggable. Keep the same Remove app extensions and auto bundle ID settings as the known good build.
+
+Sideloadly's auto bundle ID rewrites the identifier to include the team ID. The installed bundle ID
+was `com.oceanwing.SoundCore.G8AW4BQ7RV`. Confirm yours in section 6 with `frida-ps -Uai`.
+
+## 3. Enable Developer Mode
+
+On the phone, Settings, Privacy and Security, Developer Mode, turn on, reboot, and confirm after the
+reboot. This is required on iOS 16 and newer before a debugger can attach.
+
+## 4. Place The Cache Gadget
+
+Jailed injection uses Frida's own gadget from a fixed cache path, not a gadget in the app bundle.
+The error `need Gadget to attach on jailed iOS` means this file is missing.
 
 ```bash
 VER=$(frida --version)
-curl -L -o FridaGadget.dylib.gz \
+mkdir -p ~/.cache/frida
+curl -L -o /tmp/g.dylib.gz \
   "https://github.com/frida/frida/releases/download/${VER}/frida-gadget-${VER}-ios-universal.dylib.gz"
-gunzip FridaGadget.dylib.gz          # yields FridaGadget.dylib
+gunzip -c /tmp/g.dylib.gz > ~/.cache/frida/gadget-ios.dylib
 ```
 
-The universal dylib contains arm64. Keep the file named `FridaGadget.dylib`.
+The universal dylib is fine. Frida selects the arm64 slice for this arm64 app.
 
-## 3. Optional Gadget Config
+## 5. Mount The Developer Disk Image
 
-Place a `FridaGadget.config` next to the dylib to control startup. Listen mode with `on_load` set to
-`wait` pauses the app at launch until you attach, which is what we want so the hooks land before the
-early key exchange runs.
-
-```json
-{
-  "interaction": {
-    "type": "listen",
-    "address": "127.0.0.1",
-    "port": 27042,
-    "on_load": "wait"
-  }
-}
-```
-
-Switch `on_load` to `resume` later if you would rather the app start normally and attach on demand.
-Sideloadly injects any file dropped alongside the dylib, so add the config to the same injection box.
-
-## 4. Inject And Re-sign With Sideloadly
-
-Reuse the exact settings from the working non Frida build.
-
-1. Load `ipa/com.oceanwing.SoundCore_5.0.02_und3fined.ipa`.
-2. Enter the Apple ID. Use the app specific password for the two factor prompt.
-3. Advanced options, keep Remove app extensions, auto bundle ID, same as before.
-4. Drag `FridaGadget.dylib` (and `FridaGadget.config` if used) into the dylib injection box.
-5. Start. Sideloadly copies the dylib into `SoundCore.app/Frameworks/`, adds the load command, signs
-   the dylib with the same cert, and installs.
-6. Trust the developer certificate on the device if prompted.
-
-## 5. Launch And Confirm Attachment
-
-Launch the app on the phone. With `on_load` set to `wait` it will hang on a black or launch screen
-until a client attaches. Then from the Mac:
+Spawning needs `debugserver`, which lives in the developer image. On iOS 17+ the image is a
+personalized bundle mounted over the tunnel, so the old `ideviceimagemounter` does not apply. Start
+the tunnel daemon in one terminal and leave it running.
 
 ```bash
-frida-ps -U                     # expect a process named "Gadget"
-frida -U Gadget -l scripts/ios-frida/recon.js
+sudo python3 -m pymobiledevice3 remote tunneld
 ```
 
-`frida -U` uses the usbmux USB transport, so no `iproxy` step is needed. If the app was paused by
-`wait`, the Frida session resumes it once connected.
-
-## 6. Run The Hooks
-
-Load recon first, read its output, then load the capture hooks. Frida can load several scripts at
-once.
+In a second terminal, mount the image and verify.
 
 ```bash
-# recon, to confirm the gadget and name the crypto classes and exports
-frida -U Gadget -l scripts/ios-frida/recon.js
+python3 -m pymobiledevice3 mounter auto-mount
+python3 -m pymobiledevice3 mounter list
+```
 
-# live capture, request and response plus the crypto primitives
-frida -U Gadget \
+`auto-mount` downloads the correct image itself, so Xcode is not required. The mount does not
+survive a reboot, so repeat section 5 after every reboot.
+
+## 6. Spawn And Instrument
+
+The relaxed code signing trick only holds if Frida launches the app, so spawn it, do not attach to a
+copy that is already running. Kill the running app on the phone first.
+
+```bash
+frida-ps -Uai            # confirm the device and the exact bundle ID
+frida -U -f com.oceanwing.SoundCore.G8AW4BQ7RV -l scripts/ios-frida/recon.js
+```
+
+Spawn pauses the app at its entry point before its own code runs, then waits for `%resume`. That is
+the window to install an anti tamper bypass before the app's own detection can run.
+
+## 7. Run The Hooks
+
+Load recon first, read its output, then load the capture hooks.
+
+```bash
+frida -U -f com.oceanwing.SoundCore.G8AW4BQ7RV \
   -l scripts/ios-frida/network-hooks.js \
   -l scripts/ios-frida/crypto-hooks.js
 ```
@@ -92,11 +111,13 @@ Then drive the app by hand, log in, and trigger a check for update, while watchi
 
 ## Troubleshooting
 
-- No `Gadget` in `frida-ps -U`. The dylib did not load or is unsigned. Re-check the Sideloadly
-  injection and that the dylib version matches `frida --version`.
-- Immediate crash on launch. Usually a signature or library validation problem. Confirm the gadget
-  was signed by the same cert as the app, which Sideloadly should handle automatically.
-- App runs but hooks see no traffic. The networking may be routed through Dart rather than
-  `NSURLSession`. Fall back to the classes that `recon.js` reports, or to the crypto primitives, or
-  run mitmproxy in parallel as a cross check.
-- Build stopped working after a week. Free account signing expired. Re-run Sideloadly to refresh.
+- `Failed to spawn: EXC_BREAKPOINT / BRK #0x539` from an embedded gadget. The iOS 26 gadget bug.
+  Switch to the jailed spawn flow above. Do not embed the gadget on iOS 26.
+- Embedded gadget loads as arm64e in an arm64 process. Wrong slice. Thin it with
+  `lipo FridaGadget.dylib -thin arm64`. This still leaves the iOS 26 bug, so prefer jailed spawn.
+- `Failed to spawn: requires an iOS Developer Disk Image to be mounted`. Do section 5.
+- `Failed to attach: need Gadget to attach on jailed iOS`. Cache gadget missing, see section 4.
+- Black screen for about 20 seconds then a crash with code `0x8badf00d`. The launch watchdog killed
+  a paused app. Attach and resume faster, or let the spawn resume on its own.
+- App runs but hooks see no traffic. Networking may be routed through Dart, not `NSURLSession`. Fall
+  back to the classes recon reports, or to the crypto primitives, or run mitmproxy in parallel.

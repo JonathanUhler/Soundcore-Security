@@ -2,8 +2,8 @@
 /*
  * recon.js  --  Confirm the Frida Gadget loaded and map the crypto surface.
  *
- * Run first, before the capture hooks:
- *   frida -U Gadget -l scripts/ios-frida/recon.js
+ * Run first, before the capture hooks. Jailed spawn on iOS 26, see COMMANDS.md:
+ *   frida -U -f com.oceanwing.SoundCore.G8AW4BQ7RV -l scripts/ios-frida/recon.js
  *
  * It prints the process facts, the loaded modules of interest, the ObjC classes
  * whose names suggest signing or OTA logic, and the exported crypto symbols in

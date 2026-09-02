@@ -2,7 +2,7 @@
 /*
  * network-hooks.js  --  Capture TLS-decrypted HTTP(S) at the NSURLSession layer.
  *
- *   frida -U Gadget -l scripts/ios-frida/network-hooks.js
+ *   frida -U -f com.oceanwing.SoundCore.G8AW4BQ7RV -l scripts/ios-frida/network-hooks.js
  *
  * Reading the NSURLRequest and the response objects inside the process gives the
  * plaintext regardless of certificate pinning, which is the point of using Frida

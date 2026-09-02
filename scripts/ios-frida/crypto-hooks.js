@@ -3,7 +3,7 @@
  * crypto-hooks.js  --  Log the HMAC, SHA, and ECDH primitives, and give a template
  * for the app's own signing methods.
  *
- *   frida -U Gadget -l scripts/ios-frida/crypto-hooks.js
+ *   frida -U -f com.oceanwing.SoundCore.G8AW4BQ7RV -l scripts/ios-frida/crypto-hooks.js
  *
  * The recovered scheme is an ECDH P-256 exchange feeding a two-tier HMAC-SHA256
  * signer (see anker-signing-scheme-recovered). On iOS the primitives are most
