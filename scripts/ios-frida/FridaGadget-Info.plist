@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Info.plist template for packaging FridaGadget.dylib as an iOS .framework bundle.
+
+  Sideloadly's "Add Framework" injector copies the whole <Name>.framework folder into
+  SoundCore.app/Frameworks/, adds the LC_LOAD_DYLIB load command, and re-signs it. Bundling the
+  gadget this way lets the FridaGadget.config ride inside the framework so on_load:wait is honored.
+
+  If you rename the binary for stealth (e.g. AudioSupport instead of FridaGadget), these MUST stay
+  in sync: the .framework folder name, the binary filename, the install name set with
+  install_name_tool, the .config basename, and CFBundleExecutable / CFBundleName below.
+
+  MinimumOSVersion must be <= the app's deployment target (SoundCore is 13.0) or dyld will not load
+  the framework.
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>FridaGadget</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.oceanwing.SoundCore.support</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>FridaGadget</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneOS</string>
+	</array>
+	<key>MinimumOSVersion</key>
+	<string>13.0</string>
+</dict>
+</plist>
