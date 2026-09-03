@@ -15,7 +15,23 @@ app's own signature has none of that footprint. See the research note.
 
 `scprobe.c` is the Goal 1 probe. Its constructor logs a `SCPROBE_HELLO_WORLD`
 marker to the unified log and drops the same marker in the app sandbox tmp dir.
-It links only libSystem and patches no code, so it is passive.
+It links only libSystem and patches no code, so it is passive. Goal 1 passed on
+device, so the passive reader path is open.
+
+## Goal 2 Artifact
+
+`screader.c` is the credential reader. It polls the network config singleton the
+app's own signer reads, then dumps its string fields to the unified log under the
+`SCREAD` marker, so the host can reproduce a signed firmware check. It reads only
+through `mach_vm_read_overwrite`, so a bad pointer cannot crash the app, and it
+hooks nothing. Build it with `SRC=screader.c`, inject and verify the same way,
+and grep the log for `SCREAD`. See
+`research/notes/2026-09-03_iOS-Custom-Dylib-Monitor/Goal2-Credential-Reader.md`.
+
+```bash
+SRC=screader.c scripts/ios-dylib/build.sh
+pymobiledevice3 syslog live | grep SCREAD
+```
 
 ## Build
 

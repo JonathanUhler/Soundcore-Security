@@ -15,9 +15,11 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-MARKER="SCPROBE_HELLO_WORLD"
+# Which source to build. Defaults to the Goal 1 probe. For the Goal 2 reader:
+#   SRC=screader.c ./build.sh
+SRC="${SRC:-scprobe.c}"
 MIN_IOS="${MIN_IOS:-14.0}"
-OUT="${OUT:-scprobe.dylib}"
+OUT="${OUT:-${SRC%.c}.dylib}"
 
 # Locate an iPhoneOS SDK.
 SDK="${SDK:-$(xcrun --sdk iphoneos --show-sdk-path 2>/dev/null || true)}"
@@ -47,12 +49,12 @@ echo "arch  = arm64 (match the app and all its images, NOT arm64e)"
   -dynamiclib \
   -install_name "@executable_path/${OUT}" \
   -Wall -Wextra -O2 \
-  -o "${OUT}" scprobe.c
+  -o "${OUT}" "${SRC}"
 
 echo
-echo "built ${OUT}:"
+echo "built ${OUT} from ${SRC}:"
 file "${OUT}" || true
 otool -L "${OUT}" 2>/dev/null || true
 echo
 echo "next: add ${OUT} to Sideloadly's dylib inject box, re-sign, install, then"
-echo "verify with:  pymobiledevice3 syslog live | grep ${MARKER}"
+echo "verify with:  pymobiledevice3 syslog live | grep -E 'SCPROBE_HELLO_WORLD|SCREAD'"
