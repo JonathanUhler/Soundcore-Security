@@ -50,7 +50,7 @@ Two tracks that feed each other.
 
 ## Goal 0: Locate The Kill Switch In Ghidra
 
-Find `JMSafeExit` and the detection dispatcher. Method.
+Find `JMSafeExit` and the detection dispatcher. Method:
 
 - Cross reference the `APP_FIRM_` result strings and the `JMSafeExit`, `JMDetectionResult`, and
   `JMExitAlertType` strings to their referencing functions.
@@ -84,8 +84,8 @@ With the bypass active, drive the app by hand. Log in, open the paired device, a
 firmware or OTA screen. Confirm the app survives the check for update. This is the headline
 goal, a live Frida session sitting on the upgrade screen.
 
-This step needs the operational prerequisites, an account login and the P20i earbuds paired to
-the phone, since the upgrade screen is device specific. Confirm these are on hand for the session.
+It's possible to use the app without logging in to an account, so it may be possible to drive this
+step without one as well.
 
 ## Goal 4: Capture, Handoff To The Original Goals
 
@@ -104,9 +104,6 @@ and md5. This reconnects to Goals 1 and 2 of the prior plan and may run as its o
 - Early detection. If any check runs from a Swift static initializer before the spawn pause hands
   off, the hook lands too late. The prior session makes this unlikely, as the process survived the
   pause, but confirm in Goal 1.
-- Operational blockers. Reaching the upgrade screen needs a real account and the earbuds. Pinning
-  does not block the app's own traffic, so login works once anti tamper is down, but a proxy
-  would be caught by `JMCheckHttpsCer` and `HTTP_DETECTION`.
 
 ## Deliverables
 
