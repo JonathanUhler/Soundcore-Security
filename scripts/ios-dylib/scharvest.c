@@ -174,6 +174,35 @@ static void take_utf16(const unsigned char *buf, size_t len, size_t i) {
     log_url(url);
 }
 
+/* JWT / token body characters, base64url plus the dot separator. */
+static bool tok_char(unsigned char c) {
+    if (c == 0) return false;
+    if (c >= 'a' && c <= 'z') return true;
+    if (c >= 'A' && c <= 'Z') return true;
+    if (c >= '0' && c <= '9') return true;
+    return c == '.' || c == '_' || c == '-';
+}
+
+/* A JWT access token starts "eyJ" and carries two dots. Capture it from either
+ * encoding so a captured token can be replayed via sign_firmware_request.py. */
+static void take_token(const unsigned char *buf, size_t len, size_t i, bool wide) {
+    char t[MAX_URL];
+    size_t n = 0;
+    size_t step = wide ? 2 : 1;
+    while (i + step <= len && n < MAX_URL - 1 && (!wide || buf[i + 1] == 0) && tok_char(buf[i])) {
+        t[n++] = (char)buf[i];
+        i += step;
+    }
+    t[n] = '\0';
+    int dots = 0;
+    for (size_t k = 0; t[k]; k++) {
+        if (t[k] == '.') dots++;
+    }
+    if (n >= 30 && dots >= 2 && !seen_before(t)) {
+        os_log(g_log, "%{public}s TOKEN %{public}s", TAG, t);
+    }
+}
+
 /* Overwrite every occurrence of needle in [buf,len) at absolute base, in place. */
 static void overwrite(uintptr_t base, const unsigned char *buf, size_t len,
                       const unsigned char *needle, size_t nl,
@@ -202,6 +231,11 @@ static void scan_chunk(uintptr_t base, const unsigned char *buf, size_t len, boo
             } else if (buf[i] == 'h' && buf[i + 1] == 0 && buf[i + 2] == 't' && buf[i + 3] == 0 &&
                        buf[i + 4] == 't' && buf[i + 5] == 0 && buf[i + 6] == 'p' && buf[i + 7] == 0) {
                 take_utf16(buf, len, i);
+            } else if (buf[i] == 'e' && buf[i + 1] == 'y' && buf[i + 2] == 'J') {
+                take_token(buf, len, i, false);
+            } else if (buf[i] == 'e' && buf[i + 1] == 0 && buf[i + 2] == 'y' && buf[i + 3] == 0 &&
+                       buf[i + 4] == 'J' && buf[i + 5] == 0) {
+                take_token(buf, len, i, true);
             }
         }
     }
