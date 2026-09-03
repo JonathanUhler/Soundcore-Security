@@ -33,6 +33,45 @@ SRC=screader.c scripts/ios-dylib/build.sh
 pymobiledevice3 syslog live | grep SCREAD
 ```
 
+## Goal 2b Artifact, The URL Harvester
+
+The firmware endpoint has a second gate beyond the signature, an access token, and
+a replayed request returns `406 Access token expired` without one. The fix is to
+let the app make the call itself, since it holds a valid token and signs
+correctly, and to read the result. `scharvest.c` does this. It hooks nothing and
+touches memory only through `mach_vm_read_overwrite` and one optional
+`mach_vm_write` to a heap string.
+
+- URL harvest, always on. It scans the writable heap for http URLs and logs each
+  unique one, tagging firmware looking ones `FWLIKELY`. The check response, parsed
+  into a heap string, is where `lastPackage.url` lands.
+- Version forcing, optional. The earbuds are already current, so a normal check
+  returns no update. Set `VER_FROM` and `VER_TO` at the top of `scharvest.c` to
+  the current firmware version and a lower value of the SAME length. It overwrites
+  the version string in place so the app sends an old version and the server
+  returns a URL.
+
+Flow.
+
+1. Find the current P20i firmware version in the app, device info screen. Set
+   `VER_FROM` to it exactly and `VER_TO` to a lower same length value, for example
+   `01.62.00` to `00.00.01`. Leave both empty to first try a harvest only pass.
+2. Build, inject, install, launch.
+
+   ```bash
+   SRC=scharvest.c scripts/ios-dylib/build.sh
+   pymobiledevice3 syslog live | grep SCHARV
+   ```
+
+3. Connect the P20i, navigate to the firmware or OTA screen, and tap check for
+   update. Watch for a `FWLIKELY` line, that is the firmware URL.
+4. Download the firmware from that URL outside the app with `curl`. The CDN is
+   unpinned and needs no signing.
+
+Do NOT tap download or install in the app while a low version is forced. That
+could push a firmware downgrade to the earbuds. Only the check for update is
+needed, the URL is in its response.
+
 ## Build
 
 The build host is the same Mac used for Sideloadly, an Intel Mac with only the

@@ -126,6 +126,30 @@ static void dump_candidate(const char *group, int off, uintptr_t p) {
            TAG, group, off, (unsigned long)p, count, ascii);
 }
 
+/* Log up to len bytes at addr as hex plus ASCII, 16 bytes per line. Fault proof,
+ * so it is safe to point at anything, including fields that are not strings. */
+static void hexdump(const char *tag, uintptr_t addr, size_t len) {
+    for (size_t off = 0; off < len; off += 16) {
+        unsigned char b[16];
+        size_t n = (len - off < 16) ? (len - off) : 16;
+        if (!safe_read(addr + off, b, n)) {
+            os_log(g_log, "%{public}s %{public}s 0x%lx+0x%02lx <unreadable>",
+                   TAG, tag, (unsigned long)addr, (unsigned long)off);
+            return;
+        }
+        char hex[64];
+        char asc[17];
+        size_t h = 0;
+        for (size_t i = 0; i < n; i++) {
+            h += (size_t)snprintf(hex + h, sizeof(hex) - h, "%02x ", b[i]);
+            asc[i] = (b[i] >= 0x20 && b[i] < 0x7f) ? (char)b[i] : '.';
+        }
+        asc[n] = '\0';
+        os_log(g_log, "%{public}s %{public}s 0x%lx+0x%02lx: %{public}s|%{public}s|",
+               TAG, tag, (unsigned long)addr, (unsigned long)off, hex, asc);
+    }
+}
+
 static void *screader_thread(void *arg) {
     (void)arg;
     uintptr_t base = main_image_base();
@@ -154,14 +178,38 @@ static void *screader_thread(void *arg) {
             os_log(g_log, "%{public}s config populated: holder=0x%lx sub=0x%lx secret=0x%lx",
                    TAG, (unsigned long)holder, (unsigned long)sub, (unsigned long)secret);
 
-            dump_candidate("secret", 0x48, secret);
-            for (int off = 0; off <= 0xC0; off += 8) {
+            /* Raw hex of the three roots, so content is visible even when the
+             * string decoder rejects it. The secret at sub+0x48 is a constant
+             * string that did not decode last run, so its bytes are wanted. */
+            hexdump("holder", holder, 0x60);
+            hexdump("sub", sub, 0x80);
+            if (secret != 0) {
+                hexdump("secret", secret, 0x60);
+            }
+
+            /* Walk every field of sub. String fields are decoded, and each field
+             * that points at an object is also hex dumped and its own fields
+             * decoded, one level deep. The credential strings (clientId,
+             * clientSecret, presetKey) live in a nested object hung off sub. */
+            for (int off = 8; off <= 0x80; off += 8) {
                 uintptr_t fp = 0;
-                if (safe_read64(sub + off, &fp)) {
-                    dump_candidate("sub", off, fp);
+                if (!safe_read64(sub + off, &fp)) {
+                    continue;
+                }
+                dump_candidate("sub", off, fp);
+                if (fp >= 0x100000000ULL && (fp & 0x7) == 0) {
+                    char nlabel[24];
+                    snprintf(nlabel, sizeof(nlabel), "sub+0x%x>", off);
+                    hexdump(nlabel, fp, 0x50);
+                    for (int o2 = 8; o2 <= 0x50; o2 += 8) {
+                        uintptr_t gp = 0;
+                        if (safe_read64(fp + o2, &gp)) {
+                            dump_candidate(nlabel, o2, gp);
+                        }
+                    }
                 }
             }
-            for (int off = 0; off <= 0x40; off += 8) {
+            for (int off = 8; off <= 0x40; off += 8) {
                 uintptr_t fp = 0;
                 if (safe_read64(holder + off, &fp)) {
                     dump_candidate("holder", off, fp);
