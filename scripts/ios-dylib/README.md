@@ -54,6 +54,12 @@ The output `scprobe.dylib` must be arm64, not arm64e, to match the app and its
 images. `build.sh` prints `file scprobe.dylib` so this can be confirmed. Leave it
 unsigned. Sideloadly signs it during the re-sign.
 
+Build note. The iOS SDK gates `<mach/mach_vm.h>` behind
+`#error "mach_vm.h unsupported."`, so a source that includes it fails to compile.
+The function is still in libSystem and works on iOS for our own task, so the fix
+is to declare the prototype directly and not include the gated header, which is
+what `screader.c` does.
+
 ## Inject And Install
 
 1. Open Sideloadly and load the unmodified IPA,

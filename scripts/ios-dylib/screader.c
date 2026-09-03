@@ -30,7 +30,6 @@
 
 #include <os/log.h>
 #include <mach/mach.h>
-#include <mach/mach_vm.h>
 #include <mach-o/dyld.h>
 #include <mach-o/loader.h>
 #include <pthread.h>
@@ -39,6 +38,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+
+/*
+ * The iOS SDK gates <mach/mach_vm.h> behind #error "mach_vm.h unsupported.",
+ * treating it as macOS only, even though the function is in libSystem and works
+ * on iOS for our own task. Declare the prototype directly instead of including
+ * the gated header. The types come from <mach/mach.h> above.
+ */
+extern kern_return_t mach_vm_read_overwrite(vm_map_t target_task,
+                                            mach_vm_address_t address,
+                                            mach_vm_size_t size,
+                                            mach_vm_address_t data,
+                                            mach_vm_size_t *outsize);
 
 #define TAG "SCREAD"
 #define CONFIG_SLOT_OFFSET 0x5446558   /* Ghidra 0x105446558 - image base */
