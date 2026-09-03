@@ -3,16 +3,21 @@
 These notes correspond to the plan in
 `research/plans/2026-09-03_iOS-Custom-Dylib-Monitor/Problem-Statement.md`. The
 plan pivots the capture vehicle away from Frida to a passive custom dylib added
-to the Soundcore bundle at re-sign time. This session records the feasibility
-assessment and the Goal 1 artifact. The on device run is pending an operator.
+to the Soundcore bundle at re-sign time. This file is the index and the
+feasibility record. The full end of session state, what was proven, what failed,
+and the next direction, is in `Session-Status-And-Blockers.md`. Read that first.
 
 ## Status
 
-- Feasibility, assessed as viable. Reasoning below.
-- Goal 1, artifact built and documented, awaiting an on device run. The probe
-  dylib, its build script, and the inject and verify procedure are in
-  `scripts/ios-dylib/`.
-- Goal 2, not started. It depends on the Goal 1 result.
+- Feasibility, viable and proven on device. Reasoning below.
+- Goal 1, passed. The passive dylib loads, the app boots, and the marker is
+  recoverable, so there is no load time library whitelist.
+- Goal 2, partly done and currently blocked. The signing scheme and the static
+  credentials were recovered, and a host side signed client was written. A
+  replayed firmware check returns `406 Access token expired`, and it is not yet
+  resolved whether that is a missing `gtoken` or a wrong signature. The decided
+  next step is offline reversing to nail the exact signature. See
+  `Session-Status-And-Blockers.md`.
 
 ## Feasibility Assessment
 
@@ -120,7 +125,18 @@ decision recorded in the plan.
 
 ## Files In This Note
 
-- `Summary.md`, this file. The feasibility assessment and the Goal 1 status.
+- `Summary.md`, this file. The index and the feasibility and Goal 1 record.
+- `Session-Status-And-Blockers.md`, the end of session state, the blocker, the
+  decided next direction, and the Ghidra reference map. The resume point.
+- `Goal2-Credential-Reader.md`, the passive reader design and the config read
+  chain.
+- `Signing-Scheme-iOS-Recovery.md`, the full signing scheme and the credentials,
+  recovered from the iOS binary.
+- `Firmware-URL-Harvest-Pivot.md`, the `406` finding and the pivot to letting the
+  app make the call.
 
 The artifacts live under `scripts/ios-dylib/`, with `README.md` as the operator
-command sheet, `scprobe.c` the probe source, and `build.sh` the cross compiler.
+command sheet, `build.sh` the cross compiler, and the dylibs `scprobe.c` (Goal 1
+probe), `screader.c` (config reader), `scharvest.c` (URL harvester and version
+forcer), and `scheaders.c` (header value capture). The host side signed client is
+`scripts/sign_firmware_request.py`.
