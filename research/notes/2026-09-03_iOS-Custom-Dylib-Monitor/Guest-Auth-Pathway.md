@@ -99,3 +99,25 @@ recognized and `gtoken = md5(self_id)` will still be rejected.
    that the tourist session must be established live against the server through the connect flow, at
    which point capturing the live `gtoken` header value directly and passing `--gtoken` is the
    fallback.
+
+## Why screader Showed No touristId, And The Sweeper
+
+A logged out `screader` run showed the `netApi` config only, `sub+0x30` = `netApi`,
+`sub+0x40` = the clientSecret `b1c3d818...`, plus timeouts and the base URL. No `userId`, `userToken`,
+or `touristId`. That is expected. The global slot `0x105446558` reaches a config registry entry for
+`netApi`, whose data object holds the signing material by design. The identity lives in a different
+object, the session state that `updateUserInfoToken:userId:` updates, not reachable from the `netApi`
+config.
+
+`scident.c` finds it without knowing the exact global. Every config singleton the app uses clusters in
+the `0x5446xxx` region, `DAT_105446460`, `_558`, `_568`, `_1e8`, `_208`, `_440`, `_4c0`. The sweeper
+walks that whole region of global slots, then the object graph a few levels deep, decoding every
+Kotlin string and flagging identity or token shaped values with an `IDENT` marker, with the
+`parent+off` of each hit so a targeted reader can be built later. It sweeps four times over the first
+minute, since a guest session can be filled only after the app connects, and the operator drives the
+app during that window. See `scripts/ios-dylib/README.md`.
+
+The outcome is decisive either way. If an `IDENT` value appears, that is the guest `gtoken` or
+`touristId` to pass to the client. If nothing appears across all passes, the logged out app holds no
+tourist token in memory, which means this endpoint is not reachable as a pure guest and the plan must
+change, rather than the sweep having missed it.

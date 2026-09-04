@@ -72,6 +72,42 @@ Do NOT tap download or install in the app while a low version is forced. That
 could push a firmware downgrade to the earbuds. Only the check for update is
 needed, the URL is in its response.
 
+## Goal 2c Artifact, The Identity Sweeper
+
+`screader` dumps the `netApi` network config, which holds only the signing
+material, the clientSecret and presetKey. The token gate on the firmware endpoint
+needs the guest session identity instead, the `touristId` and its `gtoken`, which
+live in a different object. `scident.c` finds it. It waits for the config to
+populate, then sweeps the whole `0x5446xxx` global cluster and walks the object
+graph a few levels deep, decoding every Kotlin string and flagging the ones that
+look like an identity or token with an `IDENT` marker. It reads only through
+`mach_vm_read_overwrite` and hooks nothing, the same footprint as `screader`.
+
+It sweeps four times, at 8, 15, 25, and 40 seconds after the config appears,
+because a guest session can be filled only after the app connects or a screen that
+needs it is opened. Drive the app during that window.
+
+```bash
+SRC=scident.c scripts/ios-dylib/build.sh
+pymobiledevice3 syslog live | grep SCIDENT
+```
+
+1. Build and inject as below, then launch the app.
+2. While the sweeps run, over the first minute, connect the P20i and open the
+   device or firmware screen, so any guest session gets established.
+3. Read the log. Lines tagged `IDENT` carry the candidates.
+   - A 32 char hex value tagged `md5/gtoken?` is a `gtoken`. Pass it to the client
+     with `--gtoken`.
+   - A `numeric-id?` or `token/id?` value near it is the `userId` or `touristId`.
+     Pass it with `--tourist-id`, which also recomputes the gtoken as a cross
+     check. The `parent=0x... +0x..` context locates the field for a targeted
+     reader later.
+   - A `JWT?` value is a bearer token, pass it with `--authorization`.
+4. If no `IDENT` line appears in any pass, the guest identity is not in memory,
+   which means the logged out app holds no tourist token. That is the signal that
+   this endpoint is not reachable as a pure guest and the approach must change,
+   not that the sweep missed it.
+
 ## Build
 
 The build host is the same Mac used for Sideloadly, an Intel Mac with only the
