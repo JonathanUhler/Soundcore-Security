@@ -34,15 +34,15 @@
  *     parses the plaintext here. Capturing the input reads the decrypted response,
  *     needUpdate and any lastPackage url, with no key needed.
  *
- * Mostly the hooks only observe, but there is one active test. With INJECT_MATCHED
- * set, the serialization hook rewrites the outgoing firmware_list body to carry
- * matched:true, a field the iOS request omits, before the app encrypts and signs it.
- * The server then evaluates matched=true, and the response hook reads the decrypted
- * reply, to test whether matched returns a package for the current version. This is
- * still a data only change, the app does its own crypto, so the anti tamper sees
- * nothing, and auth is body independent so the token and unique-sign still verify.
- * A captured body is logged uncapped, chunked across os_log lines exactly like
- * scjson, and deduped by content so a body logs once across many taps.
+ * Mostly the hooks only observe, but the serialization hook can also modify the
+ * outgoing body before the app encrypts and signs it, for two active tests set at the
+ * top of the file. INJECT_MATCHED adds matched:true to the firmware_list request, and
+ * VERSION_TO rewrites the firmware_version and version fields across every outgoing
+ * body, the telemetry and the check alike, to lower the version the server tracks for
+ * this sn. Both are data only changes, the app does its own crypto, so the anti tamper
+ * sees nothing, and auth is body independent so the token and unique-sign still verify.
+ * A captured body is logged uncapped, chunked across os_log lines exactly like scjson,
+ * and deduped by content so a body logs once across many taps.
  */
 
 #import <Foundation/Foundation.h>
@@ -67,11 +67,20 @@ static unsigned g_capture_id;
  * lines cannot interleave with another capture in the unified log. */
 static os_unfair_lock g_lock = OS_UNFAIR_LOCK_INIT;
 
-/* Active test. When true, the request serialization hook injects "matched":true into
- * the outgoing firmware_list body before the app encrypts and signs it, so the server
- * sees matched=true, a field the iOS request otherwise omits. Auth is body independent,
- * so this does not break the token or unique-sign. Set false for pure observation. */
-static const bool INJECT_MATCHED = true;
+/* Active test one, the matched flag. Tested and had no effect on the response, the
+ * server ignores it for this device, so it is off. When true the serialization hook
+ * injects "matched":true into the outgoing firmware_list body. */
+static const bool INJECT_MATCHED = false;
+
+/* Active test two, the version spoof. When VERSION_TO is non-empty, every outgoing
+ * body has its firmware_version and version fields rewritten from VERSION_FROM to
+ * VERSION_TO before the app encrypts and sends it, across the device report telemetry
+ * and the upgrade check alike. The server rejects a lower version in the check alone
+ * because it cross checks against a version it tracks per sn, so the aim is to lower
+ * that tracked version everywhere at once, then have the check accepted and an update
+ * offered. VERSION_TO must be a plausible lower version. Empty disables the rewrite. */
+static const char *VERSION_FROM = "14.43";
+static const char *VERSION_TO = "14.00";
 
 /* OTA field markers, same set scjson used. firmwareList and firmware_list are the
  * definitive wrapper keys, the rest are item fields from the SCOTAMultipleItemStruct
@@ -228,10 +237,45 @@ static NSData *inject_matched(NSData *body) {
     return out;
 }
 
+/* Rewrite the firmware_version and version fields of an outgoing body from
+ * VERSION_FROM to VERSION_TO, returning a copy, or nil if neither field is present or
+ * nothing changed. The firmware_version replacement runs first, and the version
+ * replacement carries a leading quote, so it does not match inside firmware_version.
+ * The app re-encrypts, so the replacement need not preserve length. */
+static NSData *rewrite_version(NSData *body) {
+    if (body == nil || VERSION_TO[0] == '\0') {
+        return nil;
+    }
+    size_t n = (size_t)body.length;
+    const char *b = (const char *)body.bytes;
+    if (b == NULL || n < 8 || n > MAX_BODY || !mem_contains(b, n, "version")) {
+        return nil;
+    }
+    NSString *s = [[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
+    if (s == nil) {
+        return nil;
+    }
+    NSString *from = [NSString stringWithUTF8String:VERSION_FROM];
+    NSString *to = [NSString stringWithUTF8String:VERSION_TO];
+    NSString *out = s;
+    out = [out stringByReplacingOccurrencesOfString:
+                   [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", from]
+                                         withString:
+                   [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", to]];
+    out = [out stringByReplacingOccurrencesOfString:
+                   [NSString stringWithFormat:@"\"version\":\"%@\"", from]
+                                         withString:
+                   [NSString stringWithFormat:@"\"version\":\"%@\"", to]];
+    if ([out isEqualToString:s]) {
+        return nil;
+    }
+    return [out dataUsingEncoding:NSUTF8StringEncoding];
+}
+
 /* Swizzle of +[NSJSONSerialization dataWithJSONObject:options:error:]. Calls the
- * original by saved IMP, never by objc_msgSend, so there is no recursion. When
- * INJECT_MATCHED is set, the firmware_list request body is rewritten to carry
- * matched:true before the app encrypts and sends it. */
+ * original by saved IMP, never by objc_msgSend, so there is no recursion. It applies
+ * the active tests, the matched injection and the version spoof, to the outgoing body
+ * before the app encrypts and sends it. */
 typedef NSData *(*json_imp_t)(id, SEL, id, NSUInteger, NSError **);
 static json_imp_t g_orig_json;
 
@@ -239,14 +283,22 @@ static NSData *hook_dataWithJSONObject(id self, SEL _cmd, id obj, NSUInteger opt
     NSData *result = g_orig_json(self, _cmd, obj, opt, err);
     @try {
         consider(result, "json", NULL, false);
+        NSData *mod = result;
         if (INJECT_MATCHED) {
-            NSData *mod = inject_matched(result);
-            if (mod != nil) {
-                os_log(g_log, "%{public}s INJECT matched:true, %lu -> %lu bytes", TAG,
-                       (unsigned long)result.length, (unsigned long)mod.length);
-                consider(mod, "json-mod", NULL, true);
-                return mod;             /* the app encrypts and signs this instead */
+            NSData *m = inject_matched(mod);
+            if (m != nil) {
+                mod = m;
             }
+        }
+        NSData *v = rewrite_version(mod);
+        if (v != nil) {
+            mod = v;
+        }
+        if (mod != result) {
+            os_log(g_log, "%{public}s MODIFY %lu -> %lu bytes", TAG,
+                   (unsigned long)result.length, (unsigned long)mod.length);
+            consider(mod, "json-mod", NULL, true);
+            return mod;                 /* the app encrypts and signs this instead */
         }
     } @catch (__unused NSException *e) {
     }

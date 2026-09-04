@@ -198,15 +198,29 @@ It swizzles these choke points, all confirmed present in the binary.
   as `HDR` and `HDRALL` lines, and the body hook also snapshots the current headers
   as `HDRSNAP` lines in case they are set before the body.
 
-Mostly the hooks only observe, but there is one active test. With `INJECT_MATCHED`
-set at the top of `scbody.m`, the serialization hook rewrites the outgoing
-`firmware_list` body to carry `matched:true`, a field the iOS request omits, before
-the app encrypts and signs it. The app does its own crypto, so the anti tamper sees
-nothing, and auth is body independent so the token and unique-sign still verify. The
-point is to test whether `matched` makes the server return a package for the current
-version. Watch for a modified body logged as `src=json-mod`, an `INJECT` line, and
-the decrypted reply as `src=resp`. Do NOT tap download or install if the app shows an
-update. Set `INJECT_MATCHED` to false to return to pure observation.
+Mostly the hooks only observe, but the serialization hook can also modify the
+outgoing body before the app encrypts and signs it, for two active tests set at the
+top of `scbody.m`. The app does its own crypto, so the anti tamper sees nothing, and
+auth is body independent so the token and unique-sign still verify. A modified body is
+logged as `src=json-mod` after a `MODIFY` line, and the decrypted reply as `src=resp`.
+
+- `INJECT_MATCHED` adds `matched:true` to the `firmware_list` request. Tested, the
+  server ignored it, so it is off by default.
+- `VERSION_FROM` and `VERSION_TO` rewrite the `firmware_version` and `version` fields
+  across every outgoing body, the telemetry and the check alike, from the current
+  version to a lower one. The server rejects a lower version in the check alone
+  because it cross checks against a version it tracks per `sn`, so this lowers that
+  tracked version everywhere at once, to try to get the check accepted and an update
+  offered. Default `14.43` to `14.00`. Set `VERSION_TO` empty to disable.
+
+For the version spoof, connect the earbuds first so the device report telemetry with
+the spoofed version is sent, let it settle, then tap check for update, ideally a
+second time so the check follows the report. Read the `src=resp` reply. If it flips to
+`needUpdate:true` with a `lastPackage.url`, that url is the firmware. If the check
+stays `Err_InvalidParameter`, the server did not lower the tracked version, whether
+because it only ratchets upward or sets the version from a channel the client does not
+touch. Do NOT tap download or install if the app shows an update, the url in the reply
+is all that is needed.
 
 Otherwise each replacement calls the original and returns its result unchanged, so
 there is no behavioral tell. Bodies are logged uncapped, chunked like `scjson`,

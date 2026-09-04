@@ -258,12 +258,18 @@ We were hammering the one field that is tamper checked, `version`, and omitting 
 `FirmwareRequestModel` is `productCode, sn, version, productComponent, matched: Boolean,
 productLanguage, relationSn`. Our captured body omits `matched` entirely.
 
-- `matched: true`. Never sent. In OTA APIs this usually means return the package that matches the
-  given version, a re-flash or repair path, which can return `lastPackage` for the current version
-  even when `needUpdate` is false. If so it hands over the `14.43` url with no downgrade. Strongest
-  lead, and now built. `scbody.m` has `INJECT_MATCHED`, its serialization hook rewrites the outgoing
-  `firmware_list` body to add `matched:true` before the app encrypts and signs it, and the response
-  hook reads the decrypted reply. Awaiting an on device run, watch `src=json-mod` and `src=resp`.
+- `matched: true`. Tested, no effect. The `scbody.m` `INJECT_MATCHED` hook added it to the outgoing
+  body, and the wire confirmed it, the encrypted `httpBody` grew to `160` bytes, `16` IV plus `144`
+  ciphertext, matching the `144` byte modified plaintext. The response was unchanged,
+  `needUpdate:false, lastPackage:null`. So `matched` is not a repair lever for this device. Off now.
+- Version spoof, the current lead. The rejection of every lower version is best explained by a per
+  `sn` version the server tracks and cross checks the body `version` against. `scbody.m` rewrites
+  `firmware_version` and `version` from `14.43` to `14.00` across every outgoing body, the telemetry
+  and the check alike, so the tracked version is lowered everywhere at once, via `VERSION_FROM` and
+  `VERSION_TO`. Connect first so the device report goes out, then tap check, ideally twice. If the
+  check flips to `needUpdate:true` with a `lastPackage.url` the tracked version was lowerable. If it
+  stays `Err_InvalidParameter` the server ratchets upward only, or tracks the version by another
+  channel. Awaiting an on device run.
 - Per component. We send `product_component: ALL`. A specific component may behave differently.
 - The simple `/firmware/update` endpoint, `OtaRequestModel`, a second endpoint with its own gating.
 - Telemetry version spoof. Report an old `firmware_version` for our `sn` to move the server's
