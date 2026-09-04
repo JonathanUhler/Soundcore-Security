@@ -29,6 +29,11 @@
  *     app is about to send, however they were built, pass through here. Filtered by
  *     the request URL so only the batch check body is logged.
  *
+ *   +[NSJSONSerialization JSONObjectWithData:options:error:]. The deserialization
+ *     side. The batch response is an encrypted envelope, so the app decrypts it and
+ *     parses the plaintext here. Capturing the input reads the decrypted response,
+ *     needUpdate and any lastPackage url, with no key needed.
+ *
  * The replacement functions call the original implementation and return its result
  * unchanged, so behavior is identical and there is no functional tell. A captured
  * body is logged uncapped, chunked across os_log lines exactly like scjson, and
@@ -69,6 +74,8 @@ static const char *const MARKERS[] = {
     "product_language", "productLanguage",
     "base_version", "wifiVersion", "wifi_Version", "relationSn",
     "\"sn\"", "\"version\"", "\"matched\"",
+    /* response side fields, so a decrypted upgrade_check response is caught too */
+    "needUpdate", "lastPackage", "currentFirmware", "change_log", "firmware_code",
 };
 #define MARKER_COUNT ((int)(sizeof(MARKERS) / sizeof(MARKERS[0])))
 
@@ -183,6 +190,24 @@ static NSData *hook_dataWithJSONObject(id self, SEL _cmd, id obj, NSUInteger opt
     NSData *result = g_orig_json(self, _cmd, obj, opt, err);
     @try {
         consider(result, "json", NULL, false);
+    } @catch (__unused NSException *e) {
+    }
+    return result;
+}
+
+/* Swizzle of +[NSJSONSerialization JSONObjectWithData:options:error:]. This is the
+ * deserialization side, where HandyJSON turns a JSON string into a dictionary. The
+ * batch response is an encrypted envelope, so the app decrypts it and then parses the
+ * plaintext through this method. Capturing the input Data here reads the decrypted
+ * response, needUpdate and any lastPackage or currentFirmware url, with no key needed.
+ * The input is inspected, never modified, so parsing is unaffected. */
+typedef id (*jsonobject_imp_t)(id, SEL, NSData *, NSUInteger, NSError **);
+static jsonobject_imp_t g_orig_jsonobject;
+
+static id hook_JSONObjectWithData(id self, SEL _cmd, NSData *data, NSUInteger opt, NSError **err) {
+    id result = g_orig_jsonobject(self, _cmd, data, opt, err);
+    @try {
+        consider(data, "resp", NULL, false);
     } @catch (__unused NSException *e) {
     }
     return result;
@@ -318,6 +343,10 @@ static void scbody_init(void) {
     swizzle_class_method("NSJSONSerialization",
                          @selector(dataWithJSONObject:options:error:),
                          (IMP)hook_dataWithJSONObject, (IMP *)&g_orig_json);
+
+    swizzle_class_method("NSJSONSerialization",
+                         @selector(JSONObjectWithData:options:error:),
+                         (IMP)hook_JSONObjectWithData, (IMP *)&g_orig_jsonobject);
 
     swizzle_instance_method("NSMutableURLRequest",
                             @selector(setHTTPBody:),

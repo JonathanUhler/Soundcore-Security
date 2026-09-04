@@ -187,6 +187,10 @@ It swizzles these choke points, all confirmed present in the binary.
   `Data` is captured at the instant it is produced, before it can be freed.
 - `-[NSMutableURLRequest setHTTPBody:]`. The network boundary. Filtered by the
   request URL, so the batch check body is captured regardless of how it was built.
+- `+[NSJSONSerialization JSONObjectWithData:options:error:]`. The deserialization
+  side. The batch response is an encrypted envelope, so the app decrypts it and parses
+  the plaintext here. Capturing the input reads the decrypted response, `needUpdate`
+  and any `lastPackage` url, with no key needed. Logged with `src=resp`.
 - `-[NSMutableURLRequest setValue:forHTTPHeaderField:]` and
   `-[NSMutableURLRequest setAllHTTPHeaderFields:]`. The batch body turned out to be
   an encrypted envelope, so its replay needs the exact headers. These log the token,
@@ -210,9 +214,11 @@ pymobiledevice3 syslog live | grep SCBODY
    install.
 3. Read the log. A `CAPTURE #n src=... url=... BEGIN` line starts a body, then
    `#n seg k/m` lines carry the payload in order, then `CAPTURE #n END`. The `src`
-   field is `json` for the serialization hook or `httpBody` for the network hook.
-   Concatenate the `seg` payloads to get the exact body. The `HDR`, `HDRALL`, and
-   `HDRSNAP` lines carry the request headers for the firmware endpoints.
+   field is `json` for the request serialization, `httpBody` for the network body,
+   or `resp` for a decrypted response. Concatenate the `seg` payloads to get the exact
+   body. The `HDR`, `HDRALL`, and `HDRSNAP` lines carry the request headers. A
+   `src=resp` capture is the decrypted upgrade_check response, read `needUpdate` and
+   any `lastPackage` url straight from it.
 4. The batch `httpBody` is an encrypted envelope, base64 of a 16 byte timestamp
    followed by stream ciphertext, not the plaintext JSON from the `json` capture.
    Replay it with its captured headers. See the plan's `Summary.md` for the
