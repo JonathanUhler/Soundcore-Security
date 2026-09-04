@@ -83,30 +83,42 @@ graph a few levels deep, decoding every Kotlin string and flagging the ones that
 look like an identity or token with an `IDENT` marker. It reads only through
 `mach_vm_read_overwrite` and hooks nothing, the same footprint as `screader`.
 
-It sweeps four times, at 8, 15, 25, and 40 seconds after the config appears,
-because a guest session can be filled only after the app connects or a screen that
-needs it is opened. Drive the app during that window.
+It sweeps five times, at 10, 20, 35, 55, and 80 seconds after the config appears.
+The first run proved the model. The app signs the session tier with an ECDH
+derived per service key, the `uniqueSign`, a 32 char string used as 32 UTF-8 bytes,
+keyed per host. It was captured live for `anka-api-us.soundcore.com`, the user API
+host, but the firmware endpoint is a different service, so its key was not caught
+because no firmware check ran during that sweep.
+
+The point of the next run is to capture the firmware service exactly. It flags any
+URL or firmware or routing string uncapped and tagged `URL`, so the firmware
+request's routing object, which carries the exact host and path, is never dropped.
+`IDENT` still tags key and token shaped values.
 
 ```bash
 SRC=scident.c scripts/ios-dylib/build.sh
 pymobiledevice3 syslog live | grep SCIDENT
 ```
 
-1. Build and inject as below, then launch the app.
-2. While the sweeps run, over the first minute, connect the P20i and open the
-   device or firmware screen, so any guest session gets established.
-3. Read the log. Lines tagged `IDENT` carry the candidates.
-   - A 32 char hex value tagged `md5/gtoken?` is a `gtoken`. Pass it to the client
-     with `--gtoken`.
-   - A `numeric-id?` or `token/id?` value near it is the `userId` or `touristId`.
-     Pass it with `--tourist-id`, which also recomputes the gtoken as a cross
-     check. The `parent=0x... +0x..` context locates the field for a targeted
-     reader later.
-   - A `JWT?` value is a bearer token, pass it with `--authorization`.
-4. If no `IDENT` line appears in any pass, the guest identity is not in memory,
-   which means the logged out app holds no tourist token. That is the signal that
-   this endpoint is not reachable as a pure guest and the approach must change,
-   not that the sweep missed it.
+1. Build and inject as below. Connect the P20i first so it is ready.
+2. Launch the app. Within the first 80 seconds, go to the device or firmware
+   screen and tap check for update, so the app makes its own firmware request.
+   Do this before the sweeps end. Do not tap download or install.
+3. Read the log.
+   - `URL` lines carry hosts and paths. Find the one with `firmware` or
+     `sound_core`, which is the real firmware endpoint, host and path. That
+     settles the host guessing.
+   - The `IDENT` `md5/gtoken?` value in the same object cluster, at a nearby
+     `parent`, is that service's `uniqueSign` signing key. Sign with it, pass it as
+     `--client-secret`, and set `--host` to the captured host.
+   - A `JWT?` or `token/id?` value in the firmware request context is a `gtoken` or
+     bearer, pass it with `--gtoken` or `--authorization`.
+4. Then reproduce. Sign with the captured key over `ts+"+"+once+"+"+body`, send to
+   the captured host and path. If it is rejected for a missing `X-Key-Ident`, that
+   header is `generateKeyIdent(key)` and must be reversed or captured next.
+
+Keys rotate about every three days, the server public key lifetime, so capture and
+test in the same session.
 
 ## Build
 

@@ -167,6 +167,16 @@ static bool try_string(uintptr_t fp, uintptr_t parent, int off) {
     if (a < 2) {
         return false;                   /* not text, let caller descend into it */
     }
+    /* Never drop a URL or a firmware or routing string. The firmware request's
+     * routing object carries the exact host and path, which is what we need, so
+     * these are logged uncapped and tagged for an easy grep. */
+    if (strstr(ascii, "http") || strstr(ascii, "firmware") || strstr(ascii, "sound_core") ||
+        strstr(ascii, "Routing") || strstr(ascii, "ota") || strstr(ascii, "OTA") ||
+        strstr(ascii, "package") || strstr(ascii, "upgrade")) {
+        os_log(g_log, "%{public}s URL parent=0x%lx+0x%x ptr=0x%lx count=%u \"%{public}s\"",
+               TAG, (unsigned long)parent, off, (unsigned long)fp, count, ascii);
+        return true;
+    }
     const char *label = classify(ascii, a);
     if (label != NULL) {
         os_log(g_log, "%{public}s IDENT parent=0x%lx+0x%x ptr=0x%lx count=%u [%{public}s] \"%{public}s\"",
@@ -267,7 +277,7 @@ static void *scident_thread(void *arg) {
              * that needs it, so a single early sweep can miss it. Each pass resets
              * the dedup set so it re observes the whole graph. Drive the app during
              * this window, connect the earbuds and open the firmware screen. */
-            static const int delays[] = {8, 15, 25, 40};
+            static const int delays[] = {10, 20, 35, 55, 80};
             int passes = (int)(sizeof(delays) / sizeof(delays[0]));
             for (int k = 0; k < passes; k++) {
                 usleep((useconds_t)delays[k] * 1000 * 1000);
