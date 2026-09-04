@@ -29,9 +29,11 @@ capture vehicle for the real body and gathered the static evidence explaining wh
   correctly server side, so the failures are semantic. Downgrade forcing does not work, the server
   rejects a made up old version. Both accepted versions return the same small response, so this
   device is offered no update.
-- Remaining, read the response. It is an encrypted envelope, so any `currentFirmware` or
-  `lastPackage.url` must be decrypted, with the recovered `localKey` or by capturing the app's own
-  decryption in process.
+- Response read. The `scbody.m` deserialization hook captured the decrypted response,
+  `upgrade_list:[{needUpdate:false, lastPackage:null}]`. No package for an up to date device. The
+  version rejection is an anti rollback tamper check against a per SN version the server learns from
+  telemetry, not a simple comparison. Version forcing is out, but untried request levers remain,
+  chiefly the `matched` field the body never sent. See the levers section.
 
 ## Why The Schema Resisted Static Analysis
 
@@ -222,24 +224,61 @@ return the same small `107` byte response, so neither is offered an update. The 
 the request auth and body encryption are fully bypassed, forgeable without a key and replayable, but
 downgrade forcing does not work, so an up to date device is handed no package by an honest check.
 
-## The Response Is Also Encrypted
+## The Response Is Also Encrypted, And It Is Read
 
-The success response carries a `data` field that is the same envelope, base64 of a 16 byte IV prefix
-followed by stream ciphertext. The IV here is a 16 character hex nonce, not a timestamp. The no
-update plaintext is only 91 bytes, so an update response with `lastPackage` is much larger. That
-signals an update by size even before it is decrypted. Reading `lastPackage.url` in the clear needs
-either the `localKey`, to decrypt offline, or the app's own decryption captured in process.
+The response carries a `data` field that is the same envelope, base64 of a 16 byte IV prefix, a 16
+character hex nonce here, followed by stream ciphertext. The `scbody.m` deserialization hook reads
+it after the app decrypts it, so no key is needed. For this device on `14.43` the decrypted response
+is short and final.
 
-## What Is Left
+```json
+{"res_code":1,"message":"SUCCESS","upgrade_list":[{"needUpdate":false,"lastPackage":null}]}
+```
 
-- Read the decrypted response to get the ground truth for this device, whether a `currentFirmware`
-  or `lastPackage` url or an md5 is present even without an update. Keyless, extend `scbody.m` to
-  hook `+[NSJSONSerialization JSONObjectWithData:options:error:]`, the app decrypts the response.
-  Confirm against the app UI, whether it showed up to date or an update to `14.44`.
-- If the honest response carries no url, recover the `localKey` and the AES-CTR construction in
-  Ghidra, near the request adapter, `CCCrypt` and `kCCAlgorithmAES`. That decrypts every response
-  and reproduces the whole request offline, and clarifies the version validation.
-- Consider other routes to the image. The firmware may be reachable through a CDN url pattern from
-  the product code and version, or a firmware history endpoint, rather than an upgrade check that a
-  current device fails.
-- Download the firmware from the unpinned CDN with `curl`. That image is the goal of the plan.
+`lastPackage` is null. No url, no md5, no `currentFirmware`. The response wrapper is `upgrade_list`,
+each item is `needUpdate` and `lastPackage`.
+
+## The Transport Is Broken, But Version Forcing Hit A Tamper Check
+
+The request side is fully solved. The `firmware_list` snake_case schema, the encrypted envelope, the
+auth headers, the malleable forgery without the key, the replay, and the in process decryption of
+the response are all in hand. This is a complete break of the OTA request transport.
+
+Version forcing does not work, but not because the server assumes no old devices. The app reports
+`firmware_version` and `sn` to the backend continuously, seen in the telemetry captures `#6`, `#9`,
+`#33`. So the server tracks a per SN version and cross checks the body `version` against it, an anti
+rollback check. That single model explains everything. The body still carries `version` because it
+is validated, not trusted. Lower versions are rejected as `Err_InvalidParameter` because they
+disagree with what telemetry reported. And `14.44` succeeds as a `registered + 1` tolerance, for a
+device that just updated and has not re reported yet.
+
+## Untried API Levers, The Path Is Not Closed
+
+We were hammering the one field that is tamper checked, `version`, and omitting others. The Android
+`FirmwareRequestModel` is `productCode, sn, version, productComponent, matched: Boolean,
+productLanguage, relationSn`. Our captured body omits `matched` entirely.
+
+- `matched: true`. Never sent. In OTA APIs this usually means return the package that matches the
+  given version, a re-flash or repair path, which can return `lastPackage` for the current version
+  even when `needUpdate` is false. If so it hands over the `14.43` url with no downgrade. Strongest
+  lead, and now built. `scbody.m` has `INJECT_MATCHED`, its serialization hook rewrites the outgoing
+  `firmware_list` body to add `matched:true` before the app encrypts and signs it, and the response
+  hook reads the decrypted reply. Awaiting an on device run, watch `src=json-mod` and `src=resp`.
+- Per component. We send `product_component: ALL`. A specific component may behave differently.
+- The simple `/firmware/update` endpoint, `OtaRequestModel`, a second endpoint with its own gating.
+- Telemetry version spoof. Report an old `firmware_version` for our `sn` to move the server's
+  tracked version, then re check. Attacks the rollback mechanism directly.
+
+Constraint. `matched` and component changes alter the body length, and the keyless XOR forge only
+covers same length edits, since no keystream is known past the captured `129` bytes. So testing
+needs in process request modification, where the app re encrypts, or the recovered `localKey` to
+build any request offline and decrypt every response.
+
+## Fallbacks If The Levers Fail
+
+- Opportunistic capture. Leave `scbody.m` with the response hook installed. When Anker next pushes a
+  firmware update, the app's own check returns `lastPackage.url` and the hook logs it decrypted.
+- Hardware. A BLE OTA read from the owned earbuds is a separate plan, outside this cloud scope.
+- The security finding stands on its own. The OTA request auth and body encryption are bypassable in
+  process, replayable, and malleable without any key, and the response decrypts in process, bounded
+  by the server side anti rollback check. Worth writing up for disclosure regardless of the image.

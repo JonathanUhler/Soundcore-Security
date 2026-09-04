@@ -198,9 +198,19 @@ It swizzles these choke points, all confirmed present in the binary.
   as `HDR` and `HDRALL` lines, and the body hook also snapshots the current headers
   as `HDRSNAP` lines in case they are set before the body.
 
-Each replacement calls the original and returns its result unchanged, so there is
-no behavioral tell. Bodies are logged uncapped, chunked like `scjson`, deduped by
-content.
+Mostly the hooks only observe, but there is one active test. With `INJECT_MATCHED`
+set at the top of `scbody.m`, the serialization hook rewrites the outgoing
+`firmware_list` body to carry `matched:true`, a field the iOS request omits, before
+the app encrypts and signs it. The app does its own crypto, so the anti tamper sees
+nothing, and auth is body independent so the token and unique-sign still verify. The
+point is to test whether `matched` makes the server return a package for the current
+version. Watch for a modified body logged as `src=json-mod`, an `INJECT` line, and
+the decrypted reply as `src=resp`. Do NOT tap download or install if the app shows an
+update. Set `INJECT_MATCHED` to false to return to pure observation.
+
+Otherwise each replacement calls the original and returns its result unchanged, so
+there is no behavioral tell. Bodies are logged uncapped, chunked like `scjson`,
+deduped by content.
 
 ```bash
 SRC=scbody.m scripts/ios-dylib/build.sh

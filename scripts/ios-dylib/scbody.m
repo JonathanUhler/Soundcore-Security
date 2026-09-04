@@ -34,10 +34,15 @@
  *     parses the plaintext here. Capturing the input reads the decrypted response,
  *     needUpdate and any lastPackage url, with no key needed.
  *
- * The replacement functions call the original implementation and return its result
- * unchanged, so behavior is identical and there is no functional tell. A captured
- * body is logged uncapped, chunked across os_log lines exactly like scjson, and
- * deduped by content so a body logs once across many taps.
+ * Mostly the hooks only observe, but there is one active test. With INJECT_MATCHED
+ * set, the serialization hook rewrites the outgoing firmware_list body to carry
+ * matched:true, a field the iOS request omits, before the app encrypts and signs it.
+ * The server then evaluates matched=true, and the response hook reads the decrypted
+ * reply, to test whether matched returns a package for the current version. This is
+ * still a data only change, the app does its own crypto, so the anti tamper sees
+ * nothing, and auth is body independent so the token and unique-sign still verify.
+ * A captured body is logged uncapped, chunked across os_log lines exactly like
+ * scjson, and deduped by content so a body logs once across many taps.
  */
 
 #import <Foundation/Foundation.h>
@@ -61,6 +66,12 @@ static unsigned g_capture_id;
  * and the capture counter are guarded. A logged body holds the lock so its chunk
  * lines cannot interleave with another capture in the unified log. */
 static os_unfair_lock g_lock = OS_UNFAIR_LOCK_INIT;
+
+/* Active test. When true, the request serialization hook injects "matched":true into
+ * the outgoing firmware_list body before the app encrypts and signs it, so the server
+ * sees matched=true, a field the iOS request otherwise omits. Auth is body independent,
+ * so this does not break the token or unique-sign. Set false for pure observation. */
+static const bool INJECT_MATCHED = true;
 
 /* OTA field markers, same set scjson used. firmwareList and firmware_list are the
  * definitive wrapper keys, the rest are item fields from the SCOTAMultipleItemStruct
@@ -181,8 +192,46 @@ static void consider(NSData *data, const char *source, const char *url, bool for
     os_unfair_lock_unlock(&g_lock);
 }
 
+/* If body is the outgoing firmware_list request and does not already carry a matched
+ * field, return a copy with "matched":true inserted as the first key of the item
+ * object, otherwise return nil. The insert point is right after the item open "[{",
+ * which the batch body has exactly once, so the result is well formed JSON. The app
+ * then encrypts and signs this returned Data, and auth is body independent, so the
+ * token and unique-sign still verify. */
+static NSData *inject_matched(NSData *body) {
+    if (body == nil) {
+        return nil;
+    }
+    size_t n = (size_t)body.length;
+    const char *b = (const char *)body.bytes;
+    if (b == NULL || n < 16 || n > MAX_BODY) {
+        return nil;
+    }
+    if (!mem_contains(b, n, "firmware_list") || mem_contains(b, n, "\"matched\"")) {
+        return nil;
+    }
+    long at = -1;
+    for (size_t i = 0; i + 1 < n; i++) {
+        if (b[i] == '[' && b[i + 1] == '{') {
+            at = (long)(i + 2);         /* just inside the item object */
+            break;
+        }
+    }
+    if (at < 0) {
+        return nil;
+    }
+    const char *ins = "\"matched\":true,";
+    NSMutableData *out = [NSMutableData dataWithCapacity:n + 16];
+    [out appendBytes:b length:(NSUInteger)at];
+    [out appendBytes:ins length:strlen(ins)];
+    [out appendBytes:b + at length:n - (NSUInteger)at];
+    return out;
+}
+
 /* Swizzle of +[NSJSONSerialization dataWithJSONObject:options:error:]. Calls the
- * original by saved IMP, never by objc_msgSend, so there is no recursion. */
+ * original by saved IMP, never by objc_msgSend, so there is no recursion. When
+ * INJECT_MATCHED is set, the firmware_list request body is rewritten to carry
+ * matched:true before the app encrypts and sends it. */
 typedef NSData *(*json_imp_t)(id, SEL, id, NSUInteger, NSError **);
 static json_imp_t g_orig_json;
 
@@ -190,6 +239,15 @@ static NSData *hook_dataWithJSONObject(id self, SEL _cmd, id obj, NSUInteger opt
     NSData *result = g_orig_json(self, _cmd, obj, opt, err);
     @try {
         consider(result, "json", NULL, false);
+        if (INJECT_MATCHED) {
+            NSData *mod = inject_matched(result);
+            if (mod != nil) {
+                os_log(g_log, "%{public}s INJECT matched:true, %lu -> %lu bytes", TAG,
+                       (unsigned long)result.length, (unsigned long)mod.length);
+                consider(mod, "json-mod", NULL, true);
+                return mod;             /* the app encrypts and signs this instead */
+            }
+        }
     } @catch (__unused NSException *e) {
     }
     return result;
