@@ -17,9 +17,18 @@ cd "$(dirname "$0")"
 
 # Which source to build. Defaults to the Goal 1 probe. For the Goal 2 reader:
 #   SRC=screader.c ./build.sh
+# An Objective-C source (.m) is also accepted, for the swizzle capturer scbody.m,
+# and pulls in Foundation and ARC automatically.
 SRC="${SRC:-scprobe.c}"
 MIN_IOS="${MIN_IOS:-14.0}"
-OUT="${OUT:-${SRC%.c}.dylib}"
+OUT="${OUT:-${SRC%.*}.dylib}"
+
+# An Objective-C source needs the ObjC runtime, Foundation, and ARC. A plain C
+# source needs none of that, so these flags are added only for a .m file.
+EXTRA=""
+case "${SRC}" in
+  *.m) EXTRA="-fobjc-arc -framework Foundation" ;;
+esac
 
 # Locate an iPhoneOS SDK.
 SDK="${SDK:-$(xcrun --sdk iphoneos --show-sdk-path 2>/dev/null || true)}"
@@ -49,6 +58,7 @@ echo "arch  = arm64 (match the app and all its images, NOT arm64e)"
   -dynamiclib \
   -install_name "@executable_path/${OUT}" \
   -Wall -Wextra -O2 \
+  ${EXTRA} \
   -o "${OUT}" "${SRC}"
 
 echo

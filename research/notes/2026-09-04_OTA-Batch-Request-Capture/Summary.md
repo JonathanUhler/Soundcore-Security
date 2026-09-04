@@ -9,9 +9,12 @@ capture vehicle for the real body and gathered the static evidence explaining wh
 
 ## Status
 
-- Artifact built. `scripts/ios-dylib/scjson.c` captures the serialized batch body from the running
-  app. It is not yet run on device, that is the operator step. See the operator sheet in
-  `scripts/ios-dylib/README.md`.
+- First vehicle failed on device. `scripts/ios-dylib/scjson.c` swept the writable heap for the
+  serialized body but caught nothing across many taps. The string is freed faster than a full heap
+  pass, so racing it passively does not work. Kept for reference and the object-walk fallback note.
+- Second vehicle built, the deterministic one. `scripts/ios-dylib/scbody.m` captures the body by
+  ObjC method swizzling at a fixed choke point, no race. Not yet run on device, the operator step.
+  See the operator sheet in `scripts/ios-dylib/README.md`.
 - Static evidence gathered. The reason the schema resisted guessing is now clear. The OTA models
   carry two conflicting key styles in their metadata, so no single guessed shape was right.
 
@@ -40,37 +43,56 @@ which is exactly why the three shapes tried last session all returned `400`. One
 or its case, or a required non-optional like `wifi_Version`, was wrong in every guess.
 
 The only reliable answer is to read the JSON the app actually serializes, rather than keep guessing
-against ambiguous metadata. That is what `scjson.c` does.
+against ambiguous metadata.
 
-## The Capture Vehicle, scjson.c
+## First Try, The Passive Heap Sweep scjson.c, Failed
 
-Same passive vehicle proven all last session, a file backed, app signed dylib added at re-sign time.
-It reads only through `mach_vm_read_overwrite` and writes nothing, so it has none of the footprint
-the reinforcement SDK detects. It is strictly read only, no version forcing or any write, unlike
-`scharvest`, because this plan only needs to observe the body.
+`scjson.c` swept every readable, writable region on a tight loop looking for a JSON object prefix,
+re-read a bounded window from each hit, walked it quote and brace aware, and logged any object with
+the `firmwareList` wrapper key or two OTA markers. It is a pure read only vehicle, no writes, same
+footprint as `scident`. On device it caught nothing across many taps. The serialized string is freed
+faster than a full heap pass, so racing it passively does not work. The file is kept as a record and
+because its heap walk is the basis for the object-walk fallback below.
 
-How it works.
+## The Deterministic Capture scbody.m
 
-- It sweeps every readable, writable region on a tight loop for ten minutes, in 1 MB chunks, looking
-  for a JSON object prefix, `{"` in UTF-8 or the UTF-16LE form. UTF-8 is the expected encoding for a
-  HandyJSON body, the wide form is a cheap safety net.
-- On a hit it re-reads a bounded window straight from the hit address, independent of the scan
-  chunk, so a body straddling a chunk boundary is never truncated. It walks that window quote,
-  escape, and brace aware, so a brace inside a string does not close the object early, and stops at
-  the matching close brace.
-- It logs any object that carries the definitive `firmwareList` wrapper key, or at least two OTA
-  field markers from the set recovered above. Random JSON with a lone `version` does not trigger.
-- Bodies are logged uncapped, a `CAPTURE #n BEGIN` header, then `#n seg k/m` lines carrying the JSON
-  in order, then `CAPTURE #n END`, because `os_log` truncates a single long argument. The operator
-  concatenates the segments to get the exact body. Captures are deduped by content hash, so each
-  distinct body logs once even though it is re-observed on many passes.
+The fix is to stop racing and stand at a fixed choke point the body must pass through. `scbody.m`
+does that by ObjC method swizzling, and it is important that this is still not a Frida agent and not
+an inline hook.
+
+The reason it survives where Frida died is that swizzling changes data, not code.
+`method_setImplementation` swaps an `IMP` pointer inside a class method list, a `__DATA` structure,
+and the replacement is ordinary, validly signed code inside this dylib's own `__TEXT`, which AMFI
+runs because it is file backed. Nothing patches an existing instruction, builds a trampoline, or
+allocates anonymous executable memory. Every detector the SDK has actually demonstrated,
+`HOOK_ATTACK`, code integrity of function bytes, the `_dladdr` code redirection checks, targets code
+tampering, so a data only `IMP` swap is invisible to them. The residual risk is a generic swizzle
+detector, but those target the SDK's own protected methods and known jailbreak selectors, not a
+Foundation JSON or URL method.
+
+It swizzles two choke points, both confirmed present in the binary.
+
+- `+[NSJSONSerialization dataWithJSONObject:options:error:]`, selector at `0x103b602d0`, class
+  imported at `0x1054dd520`. ObjectMapper `toJSONString` at `0x1055ae2ea` and HandyJSON
+  `toJSONString` at `0x1055bcc2f` both funnel their dictionary to string step through this method,
+  so the serialized `Data` is captured the instant it is produced, before it can be freed.
+- `-[NSMutableURLRequest setHTTPBody:]`, selector at `0x103ba6501`, reached by the Swift
+  `URLRequest.httpBody` setter at `0x1055a6111`. This is the network boundary, so whatever bytes the
+  app is about to send pass through here regardless of how they were built. It is filtered by the
+  request URL, forcing a capture when the URL is the batch endpoint.
+
+Each replacement calls the original by saved `IMP`, never by `objc_msgSend`, so there is no
+recursion, and returns the original result unchanged, so there is no behavioral tell. A captured
+body is logged uncapped and chunked exactly like `scjson`, a `CAPTURE #n src=... BEGIN` line,
+then `#n seg k/m` lines, then `CAPTURE #n END`, deduped by content hash under a lock so two queues
+cannot interleave a capture. `src` is `json` or `httpBody`.
 
 ## Deliverable And How To Read It
 
-Run per `scripts/ios-dylib/README.md`, tap check for update several times inside the sweep window,
-and grep the log for `SCJSON`. The concatenated `seg` payloads are the exact body. The deliverable
-is that body, its field names, which fields are present, and the `version` and `productComponent`
-values the app sends for the A3949.
+Run per `scripts/ios-dylib/README.md`, tap check for update once, and grep the log for `SCBODY`.
+There is no race, so a single tap is enough. Concatenate the `seg` payloads to get the exact body.
+The deliverable is that body, its field names, which fields are present, and the `version` and
+`productComponent` values the app sends for the A3949.
 
 ## What Is Left
 

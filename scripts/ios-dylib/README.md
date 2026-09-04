@@ -164,6 +164,52 @@ fallback is to read the `SCOTAMultipleRequestModel` and `SCOTAMultipleItemStruct
 objects out of the heap and decode their fields, the object walk `scident` already
 does, since the model object outlives the transient JSON string.
 
+## Goal 1 Artifact, The Swizzle Capturer
+
+`scjson.c` never caught the body on device. The serialized string is freed faster
+than a full heap sweep, so racing it passively is a losing game. `scbody.m`
+replaces the race with a deterministic capture at a fixed choke point.
+
+It is still the same passive, file backed, app signed dylib, and it is still not
+Frida and not an inline hook. It captures by ObjC method swizzling, which the
+reinforcement SDK does not detect, because swizzling changes DATA, not code.
+`method_setImplementation` swaps an `IMP` pointer in a class method list, a
+`__DATA` structure, and the replacement is ordinary signed code inside this dylib's
+`__TEXT`. Nothing patches an instruction, builds a trampoline, or allocates
+anonymous executable memory, so the `HOOK_ATTACK`, code integrity, and `_dladdr`
+code redirection detectors, which all target code tampering, cannot see it. See
+`research/notes/2026-09-04_OTA-Batch-Request-Capture/Summary.md`.
+
+It swizzles two choke points, both confirmed present in the binary.
+
+- `+[NSJSONSerialization dataWithJSONObject:options:error:]`. ObjectMapper and
+  HandyJSON funnel their serialization through this Foundation method, so the JSON
+  `Data` is captured at the instant it is produced, before it can be freed.
+- `-[NSMutableURLRequest setHTTPBody:]`. The network boundary. Filtered by the
+  request URL, so the batch check body is captured regardless of how it was built.
+
+Each replacement calls the original and returns its result unchanged, so there is
+no behavioral tell. Bodies are logged uncapped, chunked like `scjson`, deduped by
+content.
+
+```bash
+SRC=scbody.m scripts/ios-dylib/build.sh
+pymobiledevice3 syslog live | grep SCBODY
+```
+
+1. Build and inject as below. `build.sh` links Foundation automatically for a `.m`
+   source. Connect the P20i first so it is ready.
+2. Launch the app, go to the device or firmware screen, and tap check for update
+   once. There is no race, so a single tap is enough. Do not tap download or
+   install.
+3. Read the log. A `CAPTURE #n src=... url=... BEGIN` line starts a body, then
+   `#n seg k/m` lines carry the JSON in order, then `CAPTURE #n END`. The `src`
+   field is `json` for the serialization hook or `httpBody` for the network hook.
+   Concatenate the `seg` payloads to get the exact body.
+4. Reproduce it with `sign_firmware_request.py --batch --raw-body '<body>'`, then
+   lower the `version` field so the server reports an update and returns
+   `lastPackage.url`.
+
 ## Build
 
 The build host is the same Mac used for Sideloadly, an Intel Mac with only the
