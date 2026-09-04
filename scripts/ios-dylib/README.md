@@ -180,13 +180,19 @@ anonymous executable memory, so the `HOOK_ATTACK`, code integrity, and `_dladdr`
 code redirection detectors, which all target code tampering, cannot see it. See
 `research/notes/2026-09-04_OTA-Batch-Request-Capture/Summary.md`.
 
-It swizzles two choke points, both confirmed present in the binary.
+It swizzles these choke points, all confirmed present in the binary.
 
 - `+[NSJSONSerialization dataWithJSONObject:options:error:]`. ObjectMapper and
   HandyJSON funnel their serialization through this Foundation method, so the JSON
   `Data` is captured at the instant it is produced, before it can be freed.
 - `-[NSMutableURLRequest setHTTPBody:]`. The network boundary. Filtered by the
   request URL, so the batch check body is captured regardless of how it was built.
+- `-[NSMutableURLRequest setValue:forHTTPHeaderField:]` and
+  `-[NSMutableURLRequest setAllHTTPHeaderFields:]`. The batch body turned out to be
+  an encrypted envelope, so its replay needs the exact headers. These log the token,
+  timestamp, content type, and any body signature the app sets on a firmware request,
+  as `HDR` and `HDRALL` lines, and the body hook also snapshots the current headers
+  as `HDRSNAP` lines in case they are set before the body.
 
 Each replacement calls the original and returns its result unchanged, so there is
 no behavioral tell. Bodies are logged uncapped, chunked like `scjson`, deduped by
@@ -203,12 +209,15 @@ pymobiledevice3 syslog live | grep SCBODY
    once. There is no race, so a single tap is enough. Do not tap download or
    install.
 3. Read the log. A `CAPTURE #n src=... url=... BEGIN` line starts a body, then
-   `#n seg k/m` lines carry the JSON in order, then `CAPTURE #n END`. The `src`
+   `#n seg k/m` lines carry the payload in order, then `CAPTURE #n END`. The `src`
    field is `json` for the serialization hook or `httpBody` for the network hook.
-   Concatenate the `seg` payloads to get the exact body.
-4. Reproduce it with `sign_firmware_request.py --batch --raw-body '<body>'`, then
-   lower the `version` field so the server reports an update and returns
-   `lastPackage.url`.
+   Concatenate the `seg` payloads to get the exact body. The `HDR`, `HDRALL`, and
+   `HDRSNAP` lines carry the request headers for the firmware endpoints.
+4. The batch `httpBody` is an encrypted envelope, base64 of a 16 byte timestamp
+   followed by stream ciphertext, not the plaintext JSON from the `json` capture.
+   Replay it with its captured headers. See the plan's `Summary.md` for the
+   envelope structure and the keystream forge that lowers the version without the
+   key.
 
 ## Build
 

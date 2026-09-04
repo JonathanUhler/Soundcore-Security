@@ -12,11 +12,15 @@ capture vehicle for the real body and gathered the static evidence explaining wh
 - First vehicle failed on device. `scripts/ios-dylib/scjson.c` swept the writable heap for the
   serialized body but caught nothing across many taps. The string is freed faster than a full heap
   pass, so racing it passively does not work. Kept for reference and the object-walk fallback note.
-- Second vehicle built, the deterministic one. `scripts/ios-dylib/scbody.m` captures the body by
-  ObjC method swizzling at a fixed choke point, no race. Not yet run on device, the operator step.
-  See the operator sheet in `scripts/ios-dylib/README.md`.
-- Static evidence gathered. The reason the schema resisted guessing is now clear. The OTA models
-  carry two conflicting key styles in their metadata, so no single guessed shape was right.
+- Second vehicle worked. `scripts/ios-dylib/scbody.m` captured both the plaintext JSON and the
+  actual wire body by ObjC swizzling, no race, first try. See `scbody.log`.
+- The real finding, the batch body is an encrypted envelope, not plaintext JSON. That is why every
+  guessed JSON shape, and the captured plaintext replayed directly, all return `400
+  Err_InvalidRequest`. The plaintext schema was never the blocker. See the section below.
+- New blocker, reproduce the envelope. It is a malleable stream cipher with no MAC, so a version
+  forced body can be forged from a recovered keystream without the key, but that is bound to the
+  captured timestamp. `scbody.m` was extended to also capture the request headers, needed to replay
+  a self consistent request and to answer whether the embedded timestamp is freshness checked.
 
 ## Why The Schema Resisted Static Analysis
 
@@ -87,21 +91,70 @@ body is logged uncapped and chunked exactly like `scjson`, a `CAPTURE #n src=...
 then `#n seg k/m` lines, then `CAPTURE #n END`, deduped by content hash under a lock so two queues
 cannot interleave a capture. `src` is `json` or `httpBody`.
 
-## Deliverable And How To Read It
+## What The Capture Showed
 
-Run per `scripts/ios-dylib/README.md`, tap check for update once, and grep the log for `SCBODY`.
-There is no race, so a single tap is enough. Concatenate the `seg` payloads to get the exact body.
-The deliverable is that body, its field names, which fields are present, and the `version` and
-`productComponent` values the app sends for the A3949.
+Every check for update produced a pair in the log. A `json` capture at `NSJSONSerialization`, the
+plaintext, and immediately after it an `httpBody` capture to the batch URL, the actual wire body.
+They are different objects, and the wire body scored zero markers, so the field names are not in it.
+
+The plaintext, capture `#59`, is the real schema.
+
+```json
+{"firmware_list":[{"sn":"3949E7BDE52DB6F4","relation_sn":"","product_code":"A3949","product_component":"ALL","version":"14.43"}]}
+```
+
+So the wrapper key is `firmware_list`, snake_case, and the item is snake_case, `sn`, `relation_sn`,
+`product_code`, `product_component` set to `ALL`, and `version` `14.43`. There is no
+`product_language`, no `base_version`, no `wifiVersion`, no `matched`. This settles the schema
+question, but the schema was never the blocker.
+
+## The Batch Body Is An Encrypted Envelope
+
+The blocker is that the plaintext JSON is not what goes on the wire. The actual body, capture `#60`,
+is a base64 string that decodes to this.
+
+```
+base64( ts_ascii[16] || ciphertext[129] )
+```
+
+The first 16 bytes are an ASCII microsecond timestamp, `1788546770331674`, generated fresh per
+request, matching the capture time to the microsecond. The rest is ciphertext, and its length equals
+the plaintext length, 129, so this is a stream cipher, and there is no MAC or tag. Almost certainly
+AES-128-CTR with the 16 byte timestamp as the IV and the makeitreal `localKey` as the key, the same
+key behind `token = md5(ts + localKey)`.
+
+This is why every attempt returned `400 Err_InvalidRequest`, including the captured plaintext
+replayed directly. The endpoint wants the encrypted envelope, and a plaintext body fails validation
+regardless of the token or timestamp paired with it. The simple `sound_core` endpoint accepts
+plaintext, the batch endpoint does not, an asymmetry worth remembering.
+
+On the timestamp freshness question. The timestamp matters, but as the crypto IV embedded in the
+body, not only as a header gate. The permanent captured token still authenticates, but the body must
+be a valid envelope, and the embedded timestamp derives the keystream. Whether that embedded
+timestamp is also freshness checked is the open question the header replay will answer.
+
+## Malleability, A Forged Body Without The Key
+
+Because the cipher is a stream cipher with no MAC, and both the plaintext `#59` and the ciphertext
+`#60` are in hand, the 129 byte keystream is recovered by XOR. A modified body can then be forged
+without the key, as long as it keeps the same length and the same embedded timestamp, so the
+keystream still aligns. A version forced body, `14.43` changed to `00.00`, was forged this way and
+round trips cleanly. The recovery and forge are one small script over `scbody.log`.
+
+The limit of this path is that the forgery reuses the captured timestamp, so it works only inside
+that timestamp's freshness window, if one exists. The general fix is to recover the `localKey` and
+the exact AES-CTR construction from the binary, which lets a fresh timestamp body be encrypted at
+will, with no timing pressure, and confirms the token scheme at the same time.
 
 ## What Is Left
 
-- Reproduce the captured body in `scripts/sign_firmware_request.py` with `--batch --raw-body`, which
-  needs no re-auth because the eufy token is body independent. Confirm it returns `res_code 1`
-  instead of `400`.
-- Lower the `version` field so the server reports an update, read `needUpdate` and
-  `lastPackage.url`, then download the firmware from the unpinned CDN with `curl`. That image is the
-  goal of the project.
-- Fallback if the transient string is never caught. Read the `SCOTAMultipleRequestModel` and
-  `SCOTAMultipleItemStruct` objects out of the heap and decode their fields, the object walk
-  `scident` already does, since the model object outlives the freed JSON string.
+- Capture the batch request headers, done, `scbody.m` now logs `HDR`, `HDRALL`, and `HDRSNAP` lines
+  for the firmware endpoints. Re-run on device and read the token, timestamp, content type, and any
+  signature over the body.
+- Replay a self consistent request, the captured `#60` body with its captured headers, to confirm
+  the envelope format is accepted and to learn whether the embedded timestamp is freshness checked.
+- If it is accepted, send the forged version `00.00` body, read `needUpdate` and `lastPackage.url`,
+  then download the firmware from the unpinned CDN with `curl`. That image is the goal of the plan.
+- The robust path, recover the `localKey` and the AES-CTR construction from the binary in Ghidra, so
+  a fresh timestamp body can be encrypted anytime. Search near the request adapter for CommonCrypto
+  `CCCrypt`, `kCCAlgorithmAES`, or the base64 and timestamp assembly.

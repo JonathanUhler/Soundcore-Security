@@ -188,27 +188,94 @@ static NSData *hook_dataWithJSONObject(id self, SEL _cmd, id obj, NSUInteger opt
     return result;
 }
 
+/* The request body is an encrypted envelope, not the plaintext JSON, and its
+ * replay needs the exact headers the app paired with it, especially the token and
+ * timestamp and any signature over the body. So the header setters are swizzled
+ * too, filtered to the firmware endpoints, and the current header set is also
+ * snapshotted when the body is set, since the app's adapter may add headers either
+ * before or after the body. */
+static NSString *req_url_string(id req) {
+    @try {
+        NSURL *u = [(NSURLRequest *)req URL];
+        return u ? [u absoluteString] : nil;
+    } @catch (__unused NSException *e) {
+        return nil;
+    }
+}
+
+static bool url_is_target(NSString *us) {
+    if (us == nil) {
+        return false;
+    }
+    return [us containsString:@"upgrade_check"] || [us containsString:@"firmware/upgrade"] ||
+           [us containsString:@"speaker/firmware"];
+}
+
+static void dump_headers(id req) {
+    @try {
+        NSDictionary *h = [(NSURLRequest *)req allHTTPHeaderFields];
+        for (id k in h) {
+            os_log(g_log, "%{public}s HDRSNAP %{public}s: %{public}s", TAG,
+                   [[k description] UTF8String], [[h[k] description] UTF8String]);
+        }
+    } @catch (__unused NSException *e) {
+    }
+}
+
 /* Swizzle of -[NSMutableURLRequest setHTTPBody:]. Reads the request URL for context
- * and to force a capture when it is the batch endpoint, then calls the original. */
+ * and to force a capture when it is the batch endpoint, snapshots the headers set so
+ * far, then calls the original. */
 typedef void (*sethttpbody_imp_t)(id, SEL, NSData *);
 static sethttpbody_imp_t g_orig_sethttpbody;
 
 static void hook_setHTTPBody(id self, SEL _cmd, NSData *body) {
     @try {
-        NSString *us = nil;
-        @try {
-            NSURL *u = [(NSURLRequest *)self URL];
-            us = u ? [u absoluteString] : nil;
-        } @catch (__unused NSException *e) {
+        NSString *us = req_url_string(self);
+        bool target = url_is_target(us);
+        consider(body, "httpBody", us ? [us UTF8String] : NULL, target);
+        if (target) {
+            dump_headers(self);
         }
-        const char *url = us ? [us UTF8String] : NULL;
-        bool force = us && ([us containsString:@"upgrade_check"] ||
-                            [us containsString:@"firmware/upgrade"] ||
-                            [us containsString:@"speaker/firmware"]);
-        consider(body, "httpBody", url, force);
     } @catch (__unused NSException *e) {
     }
     g_orig_sethttpbody(self, _cmd, body);
+}
+
+/* Swizzle of -[NSMutableURLRequest setValue:forHTTPHeaderField:]. Logs each header
+ * set on a firmware request, so a token or timestamp added after the body is still
+ * captured. */
+typedef void (*setvalue_imp_t)(id, SEL, NSString *, NSString *);
+static setvalue_imp_t g_orig_setvalue;
+
+static void hook_setValueForHTTPHeaderField(id self, SEL _cmd, NSString *value, NSString *field) {
+    @try {
+        NSString *us = req_url_string(self);
+        if (url_is_target(us)) {
+            os_log(g_log, "%{public}s HDR %{public}s: %{public}s", TAG,
+                   field ? [field UTF8String] : "?", value ? [value UTF8String] : "");
+        }
+    } @catch (__unused NSException *e) {
+    }
+    g_orig_setvalue(self, _cmd, value, field);
+}
+
+/* Swizzle of -[NSMutableURLRequest setAllHTTPHeaderFields:]. Logs headers applied
+ * wholesale, the way Alamofire's HTTPHeaders are. */
+typedef void (*setallheaders_imp_t)(id, SEL, NSDictionary *);
+static setallheaders_imp_t g_orig_setallheaders;
+
+static void hook_setAllHTTPHeaderFields(id self, SEL _cmd, NSDictionary *fields) {
+    @try {
+        NSString *us = req_url_string(self);
+        if (url_is_target(us)) {
+            for (id k in fields) {
+                os_log(g_log, "%{public}s HDRALL %{public}s: %{public}s", TAG,
+                       [[k description] UTF8String], [[fields[k] description] UTF8String]);
+            }
+        }
+    } @catch (__unused NSException *e) {
+    }
+    g_orig_setallheaders(self, _cmd, fields);
 }
 
 static void swizzle_class_method(const char *cls_name, SEL sel, IMP repl, IMP *saved) {
@@ -255,6 +322,14 @@ static void scbody_init(void) {
     swizzle_instance_method("NSMutableURLRequest",
                             @selector(setHTTPBody:),
                             (IMP)hook_setHTTPBody, (IMP *)&g_orig_sethttpbody);
+
+    swizzle_instance_method("NSMutableURLRequest",
+                            @selector(setValue:forHTTPHeaderField:),
+                            (IMP)hook_setValueForHTTPHeaderField, (IMP *)&g_orig_setvalue);
+
+    swizzle_instance_method("NSMutableURLRequest",
+                            @selector(setAllHTTPHeaderFields:),
+                            (IMP)hook_setAllHTTPHeaderFields, (IMP *)&g_orig_setallheaders);
 
     os_log(g_log, "%{public}s ready, tap check for update", TAG);
 }
