@@ -3,21 +3,34 @@
 These notes correspond to the plan in
 `research/plans/2026-09-03_iOS-Custom-Dylib-Monitor/Problem-Statement.md`. The
 plan pivots the capture vehicle away from Frida to a passive custom dylib added
-to the Soundcore bundle at re-sign time. This file is the index and the
-feasibility record. The full end of session state, what was proven, what failed,
-and the next direction, is in `Session-Status-And-Blockers.md`. Read that first.
+to the Soundcore bundle at re-sign time. This file is the index. The session ran
+well past its original scope, so read the notes in this order for the full arc,
+`Session-Status-And-Blockers.md`, then `Signature-Offline-Resolution.md`,
+`Guest-Auth-Pathway.md`, and `Eufy-Token-Scheme.md`. The last one is the current
+state.
 
 ## Status
 
-- Feasibility, viable and proven on device. Reasoning below.
-- Goal 1, passed. The passive dylib loads, the app boots, and the marker is
-  recoverable, so there is no load time library whitelist.
-- Goal 2, partly done and currently blocked. The signing scheme and the static
-  credentials were recovered, and a host side signed client was written. A
-  replayed firmware check returns `406 Access token expired`, and it is not yet
-  resolved whether that is a missing `gtoken` or a wrong signature. The decided
-  next step is offline reversing to nail the exact signature. See
-  `Session-Status-And-Blockers.md`.
+- Feasibility, viable and proven on device. Goal 1 passed, no load time library
+  whitelist. Reasoning below.
+- The custom dylib vehicle carried the whole session. `scprobe`, `screader`, and
+  `scident` all loaded passively and dumped what was asked, with no anti tamper
+  reaction.
+- Auth to the firmware API is SOLVED, and it is account free. The long arc, the
+  full detail is in the four notes above.
+  - The firmware host is `speaker.eufylife.com`, eufy infrastructure, not the
+    soundcore backend `anka-api-us.soundcore.com` that carries the user and IoT
+    APIs. That mix up cost several probes.
+  - The eufy hosts sign with a simple `token` plus `timestamp`, not the soundcore
+    ECDH scheme. `token = md5(timestamp + localKey)`, body and path independent,
+    and the server does not check timestamp freshness, so a pair captured off the
+    unpinned `log.eufylife.com` telemetry is a permanent, account free credential.
+  - A captured pair returns `res_code 1 SUCCESS` from the firmware endpoint.
+- The remaining blocker is the batch request schema, not auth. The real firmware
+  check is the batch endpoint `api/v2/speaker/firmware/upgrade_check/batch`, and
+  every body shape tried returns `400 Err_InvalidRequest`. The decided next step
+  is to capture a real batch body from the app with the dylib, in the
+  `2026-09-04_OTA-Batch-Request-Capture` plan. See `Eufy-Token-Scheme.md`.
 
 ## Feasibility Assessment
 
@@ -125,18 +138,27 @@ decision recorded in the plan.
 
 ## Files In This Note
 
+In reading order for the full arc.
+
 - `Summary.md`, this file. The index and the feasibility and Goal 1 record.
-- `Session-Status-And-Blockers.md`, the end of session state, the blocker, the
-  decided next direction, and the Ghidra reference map. The resume point.
-- `Goal2-Credential-Reader.md`, the passive reader design and the config read
-  chain.
-- `Signing-Scheme-iOS-Recovery.md`, the full signing scheme and the credentials,
-  recovered from the iOS binary.
-- `Firmware-URL-Harvest-Pivot.md`, the `406` finding and the pivot to letting the
-  app make the call.
+- `Session-Status-And-Blockers.md`, the mid session state at the `406` blocker and
+  the Ghidra reference map. Point in time, superseded by the later notes.
+- `Goal2-Credential-Reader.md`, the passive reader design and the config read chain.
+- `Signing-Scheme-iOS-Recovery.md`, the soundcore ECDH signing scheme and the
+  static credentials, recovered from the iOS binary.
+- `Firmware-URL-Harvest-Pivot.md`, the first `406` finding and the harvest pivot.
+- `Signature-Offline-Resolution.md`, the offline reversing that fixed the
+  `X-Client-Credential`, then found the `406` is a token gate before the signature.
+- `Guest-Auth-Pathway.md`, the reframing away from a user account to an app level
+  session, `gtoken = md5(identity)`, and why `screader` showed no identity.
+- `Eufy-Token-Scheme.md`, the current state. The firmware host is
+  `speaker.eufylife.com`, the eufy `token` plus `timestamp` scheme, auth solved with
+  a permanent captured token, and the open batch request schema blocker.
 
 The artifacts live under `scripts/ios-dylib/`, with `README.md` as the operator
 command sheet, `build.sh` the cross compiler, and the dylibs `scprobe.c` (Goal 1
 probe), `screader.c` (config reader), `scharvest.c` (URL harvester and version
-forcer), and `scheaders.c` (header value capture). The host side signed client is
-`scripts/sign_firmware_request.py`.
+forcer), `scheaders.c` (header value capture), and `scident.c` (identity and
+config global sweeper). The host side client is `scripts/sign_firmware_request.py`,
+which now speaks the eufy `token` scheme with `--eufy`, the batch endpoint with
+`--batch`, and a `--raw-body` for schema iteration.

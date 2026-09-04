@@ -120,6 +120,50 @@ pymobiledevice3 syslog live | grep SCIDENT
 Keys rotate about every three days, the server public key lifetime, so capture and
 test in the same session.
 
+## Goal 1 Artifact Of The Batch Capture Plan, The JSON Body Capturer
+
+`scjson.c` captures the exact serialized batch request body. Auth to the firmware
+API is solved, but the real check is the batch endpoint
+`api/v2/speaker/firmware/upgrade_check/batch`, model `SCOTAMultipleRequestModel`,
+and every hand guessed body returns `400 Err_InvalidRequest`. The reflection
+metadata carries two conflicting key styles, snake_case `product_code` next to
+camelCase `firmwareList` and `wifiVersion`, so the required shape is ambiguous.
+This dylib reads the JSON the app itself serializes just before the pinned TLS
+send. See `research/notes/2026-09-04_OTA-Batch-Request-Capture/Summary.md`.
+
+It sweeps the readable, writable heap on a tight loop looking for a JSON object
+prefix, `{"` in UTF-8 or the UTF-16LE form, re-reads a bounded window from the hit
+address so a body straddling a scan chunk is not truncated, walks it quote and
+brace aware to capture one complete object, and logs any object carrying the
+`firmwareList` wrapper key or two OTA field markers. It reads only through
+`mach_vm_read_overwrite` and writes nothing, the same footprint as `scident`, so it
+stays passive. Bodies are logged uncapped, chunked across `seg` lines with a
+capture id, and deduped by content so each distinct body logs once.
+
+```bash
+SRC=scjson.c scripts/ios-dylib/build.sh
+pymobiledevice3 syslog live | grep SCJSON
+```
+
+1. Build and inject as below. Connect the P20i first so it is ready.
+2. Launch the app. Within the 10 minute sweep window, go to the device or firmware
+   screen and tap check for update. Tap it several times, the body is short lived
+   and repeated taps re-serialize it, giving more passes a chance to catch it. Do
+   not tap download or install.
+3. Read the log. A `CAPTURE #n ... BEGIN` line starts a body, then `#n seg k/m`
+   lines carry the JSON in order, then `CAPTURE #n END`. Concatenate the `seg`
+   payloads in order to get the exact body. The `enc` field says `ascii` or
+   `utf16`, `score` is how many OTA markers matched, and `closed` versus
+   `TRUNCATED` says whether the object ended on its own close brace.
+4. Reproduce it. Pass the concatenated body to `sign_firmware_request.py --batch
+   --raw-body '<body>'`, then lower the `version` field so the server reports an
+   update and returns `lastPackage.url`.
+
+If the serialized string is never caught because it is freed too fast, the
+fallback is to read the `SCOTAMultipleRequestModel` and `SCOTAMultipleItemStruct`
+objects out of the heap and decode their fields, the object walk `scident` already
+does, since the model object outlives the transient JSON string.
+
 ## Build
 
 The build host is the same Mac used for Sideloadly, an Intel Mac with only the

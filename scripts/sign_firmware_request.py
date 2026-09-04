@@ -54,16 +54,48 @@ DEFAULT_PRODUCT = "A3949"          # the P20i
 DEFAULT_SN = "3949E7BDE52DB6F4"    # derivable from the BT MAC, see MITM-Analysis.md
 DEFAULT_VERSION = "1.00"           # a low version so the server reports an update
 
+# A live token+timestamp pair captured off the unpinned log.eufylife.com telemetry.
+# The server checks only that token == md5(timestamp + secret), not that the timestamp
+# is recent, so this pair does not expire and is a reusable credential. Confirmed still
+# accepted, res_code 1 SUCCESS, on a later day. See Eufy-Token-Scheme.md.
+DEFAULT_EUFY_TIMESTAMP = "1788043091"
+DEFAULT_EUFY_TOKEN = "361ec02987361d207d05392b9f0d89e4"
+
 
 def build_body(args):
-    # OtaRequestModel. Compact separators so the signed string is the exact byte
-    # sequence sent as the body.
-    body_obj = {
-        "product_code": args.product_code,
-        "sn": args.sn,
-        "version": args.version,
-        "matched": False,
-    }
+    # Raw override for fast iteration. The eufy token is body independent, so any body
+    # can be tried without re-auth. Use this to probe the batch schema by hand.
+    if args.raw_body:
+        return args.raw_body
+    # Two request shapes. The simple sound_core endpoint takes an OtaRequestModel.
+    # The iOS app actually checks firmware through the batch endpoint, which takes
+    # SCOTAMultipleRequestModel, an object with a firmware_list of FirmwareRequestModel.
+    # The batch entry carries product_component and product_language, which the P20i
+    # per component firmware likely needs, and which the simple model has no field for.
+    if args.batch:
+        entry = {
+            "product_code": args.product_code,
+            "sn": args.sn,
+            "version": args.version,
+            "matched": args.matched,
+        }
+        if args.product_component != "":
+            entry["product_component"] = args.product_component
+        if args.product_language != "":
+            entry["product_language"] = args.product_language
+        if args.base_version != "":
+            entry["base_version"] = args.base_version
+        # The iOS model SCOTAMultipleRequestModel wraps the list under firmwareList,
+        # camelCase. The snake_case firmware_list from the Android model is not in the
+        # iOS binary and returned 400 Err_InvalidRequest, so the default is firmwareList.
+        body_obj = {args.batch_key: [entry]}
+    else:
+        body_obj = {
+            "product_code": args.product_code,
+            "sn": args.sn,
+            "version": args.version,
+            "matched": args.matched,
+        }
     return json.dumps(body_obj, separators=(",", ":"))
 
 
@@ -92,6 +124,16 @@ def gtoken(identity):
     # The identity is the userId when logged in, the touristId for a guest. This
     # matches the public gtoken = md5(user_id) recovery.
     return hashlib.md5(identity.encode("utf-8")).hexdigest()
+
+
+def eufy_token(timestamp_s, localkey):
+    # The eufylife.com hosts, speaker and log, sign with a token header, not the
+    # soundcore X-Signature. The MITM flows show token = md5(timestamp + secret),
+    # body and path independent, keyed on an app global secret, the makeitreal
+    # regional localKey. See MITM-Analysis.md and Eufy-Token-Scheme.md. The exact
+    # concatenation is a guess until the localKey is recovered, so this is only for
+    # the localKey path. The capture and replay path passes token directly.
+    return hashlib.md5((timestamp_s + localkey).encode("utf-8")).hexdigest()
 
 
 def build_request(args):
@@ -124,7 +166,10 @@ def build_request(args):
     uid_header = tourist_id
     gtoken_header = args.gtoken if args.gtoken else (gtoken(tourist_id) if tourist_id else "")
 
-    url = "https://%s/v1/speaker/sound_core/%s/firmware/update" % (args.host, args.product_code)
+    if args.batch:
+        url = "https://%s/%s" % (args.host, args.batch_path.lstrip("/"))
+    else:
+        url = "https://%s/v1/speaker/sound_core/%s/firmware/update" % (args.host, args.product_code)
     headers = {
         "Content-Type": "application/json",
         # The recovered signing headers.
@@ -156,19 +201,55 @@ def build_request(args):
     # token, only present when signed into an account, usually with a "Bearer " prefix.
     if args.authorization:
         headers["Authorization"] = args.authorization
+
+    # Eufy scheme. The firmware host speaker.eufylife.com is eufy infrastructure and
+    # signs with a token plus timestamp, the same headers the unpinned log.eufylife.com
+    # telemetry carries. The token is md5(timestamp + localKey), body and path
+    # independent, so a token captured for a timestamp is valid for any request at that
+    # timestamp within the freshness window. Two ways to supply it.
+    #   Capture and replay, no secret needed. Grab a live timestamp and token pair off
+    #     log.eufylife.com, which is unpinned, and pass --eufy-timestamp and --eufy-token.
+    #   localKey, once recovered. Pass --eufy-localkey and the token is computed for a
+    #     fresh timestamp.
+    if args.eufy or args.eufy_token or args.eufy_localkey:
+        ts_s = args.eufy_timestamp if args.eufy_timestamp else str(int(time.time()))
+        # localKey wins when given, so it recomputes the token rather than using the
+        # default captured token. With the default timestamp this also verifies the
+        # localKey, the computed token must equal the known captured token.
+        if args.eufy_localkey:
+            token = eufy_token(ts_s, args.eufy_localkey)
+        elif args.eufy_token:
+            token = args.eufy_token
+        else:
+            token = ""
+        if not args.keep_soundcore:
+            # Send only the eufy scheme, since the soundcore signing headers belong to
+            # a different backend and are what the earlier probes wrongly sent.
+            for k in ("X-Signature", "X-Request-Ts", "X-Request-Once", "Client-id",
+                      "X-Client-Credential", "gtoken", "uid", "X-Key-Ident"):
+                headers.pop(k, None)
+        headers["timestamp"] = ts_s
+        if token:
+            headers["token"] = token
+        headers["phone_virtual_id"] = args.phone_virtual_id or args.openudid
     return url, headers, body, message, cred_message, client_secret
 
 
 def show(url, headers, body, message, cred_message, client_secret):
     print("=== signing ===")
-    print("  clientSecret : %s" % client_secret)
-    print("  sign message : %s" % message)
-    print("  X-Signature  : %s" % headers["X-Signature"])
-    print("  cred message : %s" % cred_message)
-    print("  Client-id    : %r" % headers["Client-id"])
-    print("  X-Client-Cred: %s" % headers["X-Client-Credential"])
-    print("  uid          : %r" % headers["uid"])
-    print("  gtoken       : %s" % headers.get("gtoken", "(none)"))
+    if "X-Signature" in headers:
+        print("  clientSecret : %s" % client_secret)
+        print("  sign message : %s" % message)
+        print("  X-Signature  : %s" % headers["X-Signature"])
+        print("  cred message : %s" % cred_message)
+        print("  Client-id    : %r" % headers["Client-id"])
+        print("  X-Client-Cred: %s" % headers["X-Client-Credential"])
+        print("  uid          : %r" % headers["uid"])
+        print("  gtoken       : %s" % headers.get("gtoken", "(none)"))
+    if "token" in headers:
+        print("  eufy scheme  : token+timestamp")
+        print("  timestamp    : %s" % headers["timestamp"])
+        print("  token        : %s" % headers["token"])
     print("=== request ===")
     print("POST", url)
     for k, v in headers.items():
@@ -221,11 +302,43 @@ def main():
                     help="override the computed gtoken with a raw value captured from the app")
     ap.add_argument("--authorization", default="",
                     help="user bearer token, only when signed into an account, usually 'Bearer ...'")
+    ap.add_argument("--eufy", action="store_true",
+                    help="use the eufy token+timestamp scheme (speaker.eufylife.com), dropping the "
+                         "soundcore signing headers unless --keep-soundcore is given")
+    ap.add_argument("--eufy-token", default=DEFAULT_EUFY_TOKEN,
+                    help="token paired with --eufy-timestamp. Defaults to a captured pair that does "
+                         "not expire, since the server does not check timestamp freshness")
+    ap.add_argument("--eufy-timestamp", default=DEFAULT_EUFY_TIMESTAMP,
+                    help="timestamp (unix seconds) matching --eufy-token, or for --eufy-localkey")
+    ap.add_argument("--eufy-localkey", default="",
+                    help="the recovered app localKey. token = md5(timestamp + localKey)")
+    ap.add_argument("--phone-virtual-id", default="",
+                    help="phone_virtual_id header, defaults to --openudid")
+    ap.add_argument("--keep-soundcore", action="store_true",
+                    help="keep the soundcore X-Signature headers alongside the eufy scheme")
     ap.add_argument("--host", default=DEFAULT_HOST)
     ap.add_argument("--product-code", default=DEFAULT_PRODUCT)
     ap.add_argument("--sn", default=DEFAULT_SN)
     ap.add_argument("--version", default=DEFAULT_VERSION,
                     help="current firmware version, a low value asks for an update")
+    ap.add_argument("--matched", action="store_true",
+                    help="set the matched flag true, default false")
+    ap.add_argument("--raw-body", default="",
+                    help="send this exact JSON as the body, overriding the built one. The eufy token "
+                         "is body independent, so this iterates the batch schema with no re-auth")
+    ap.add_argument("--batch", action="store_true",
+                    help="use the batch endpoint SCOTAMultipleRequestModel that the iOS app uses, a "
+                         "firmware_list of entries, instead of the simple sound_core endpoint")
+    ap.add_argument("--batch-path", default="api/v2/speaker/firmware/upgrade_check/batch",
+                    help="path for --batch, try with and without the api prefix if it 404s")
+    ap.add_argument("--batch-key", default="firmwareList",
+                    help="JSON key wrapping the list, firmwareList on iOS, firmware_list on Android")
+    ap.add_argument("--product-component", default="",
+                    help="firmware component for the batch entry, omitted when empty")
+    ap.add_argument("--product-language", default="en",
+                    help="product_language for the batch entry, omitted when empty")
+    ap.add_argument("--base-version", default="",
+                    help="base_version for the batch entry, omitted when empty")
     ap.add_argument("--country", default="US")
     ap.add_argument("--language", default="en")
     ap.add_argument("--app-version", default="5.0.02")
