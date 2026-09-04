@@ -1,20 +1,20 @@
 # Session Status And Blockers
 
-This is the wrap up for the 2026-09-03 session. It records what was proven, what was built, what
-was tried and failed, the current blocker, and the decided next direction. Read this first to resume.
+This is the wrap up for the 2026-09-03 session. It records what was proven, what was built, what was
+tried and failed, the current blocker, and the decided next direction. Read this first to resume.
 
 ## One Paragraph Status
 
-The custom dylib vehicle works and is not detected. Goal 1 passed. The request signing scheme and the
-static credentials were fully recovered from the iOS binary. A host side signed client was written.
-The blocker is that a replayed firmware check returns `406 Access token expired`, the same as an
-unsigned probe, so `406` reads as a generic "not authenticated" rather than a literal expiry. The app
-runs logged out yet still authenticates its own calls, so whatever it sends is computable or present
-in memory, not tied to an account. Passive capture of the live per request auth values failed because
-they are computed just in time and freed, and clean hooking is blocked on this stack. The leading
-hypothesis is that logged out requests do not send `gtoken` at all and the `406` is our signature
-being wrong, not a missing token. The decided next step is offline reversing to nail the exact
-signature, which needs no device runs.
+The custom dylib vehicle works and is not detected. Goal 1 passed. The request signing scheme and
+the static credentials were fully recovered from the iOS binary. A host side signed client was
+written.  The blocker is that a replayed firmware check returns `406 Access token expired`, the same
+as an unsigned probe, so `406` reads as a generic "not authenticated" rather than a literal
+expiry. The app runs logged out yet still authenticates its own calls, so whatever it sends is
+computable or present in memory, not tied to an account. Passive capture of the live per request
+auth values failed because they are computed just in time and freed, and clean hooking is blocked on
+this stack. The leading hypothesis is that logged out requests do not send `gtoken` at all and the
+`406` is our signature being wrong, not a missing token. The decided next step is offline reversing
+to nail the exact signature, which needs no device runs.
 
 ## What Is Proven
 
@@ -36,9 +36,9 @@ signature, which needs no device runs.
   - `X-Request-Once` is a generated nonce. `Client-id` and `X-Client-Credential` default to empty in
     the per request header builder.
 - `gtoken` is computed client side by `FUN_102ee542c`, `hex(hash(...))` through a global hasher
-  `FUN_102d42cbc` keyed off `DAT_1054464c0`, and it is only set inside a branch gated by a user flag,
-  `(param_1 + 0x20) & 1`. The `updateUserInfo ... usr = ...` string near it is a debug log line, not
-  the hash input.
+  `FUN_102d42cbc` keyed off `DAT_1054464c0`, and it is only set inside a branch gated by a user
+  flag, `(param_1 + 0x20) & 1`. The `updateUserInfo ... usr = ...` string near it is a debug log
+  line, not the hash input.
 
 ## Artifacts Built This Session
 
@@ -61,25 +61,28 @@ Under `scripts/`, `sign_firmware_request.py`, the host side signed client. It bu
   server rejects before or without telling us about it.
 - Version forcing in app. `scharvest` overwrote the `14.43` version string on the heap, the writes
   succeeded with `kr=0`, but the app still reported `14.43`. The sent version is sourced from the
-  earbuds over BLE and held numerically, so the display string is not what the request uses. Patching
-  heap strings cannot force it.
+  earbuds over BLE and held numerically, so the display string is not what the request
+  uses. Patching heap strings cannot force it.
 - Token capture. `scharvest` extended to log JWTs printed nothing, consistent with being logged out,
   so there is no user bearer token in memory.
 - Header value capture. `scheaders` scanned about four minutes for heap pointers to the header key
-  constants and found none. The per request header map is transient and freed, so a seconds long scan
-  races a millisecond lived structure, or the map copies keys rather than referencing the constants.
-- Hooking is blocked on this stack. Ktor uses NSURLSession, whose TLS runs inside already bound system
-  dylibs, so a `dyld` interpose or fishhook on `SSL_write` does not catch its internal calls. The
-  commonkit signer functions are internal with no symbol to interpose. The only thing that would work
-  is an inline hook, which is the anonymous executable memory footprint the anti tamper kills.
+  constants and found none. The per request header map is transient and freed, so a seconds long
+  scan races a millisecond lived structure, or the map copies keys rather than referencing the
+  constants.
+- Hooking is blocked on this stack. Ktor uses NSURLSession, whose TLS runs inside already bound
+  system dylibs, so a `dyld` interpose or fishhook on `SSL_write` does not catch its internal
+  calls. The commonkit signer functions are internal with no symbol to interpose. The only thing
+  that would work is an inline hook, which is the anonymous executable memory footprint the anti
+  tamper kills.
 
 ## Useful Runtime Facts From The Device
 
-- Logged out, the app still makes successful authenticated calls to `speaker.eufylife.com/api/v2/...`,
-  the same host as the firmware endpoint `/v1/speaker/sound_core/A3949/firmware/update`.
+- Logged out, the app still makes successful authenticated calls to
+  `speaker.eufylife.com/api/v2/...`, the same host as the firmware endpoint
+  `/v1/speaker/sound_core/A3949/firmware/update`.
 - The app carries a full endpoint config template with `*_DOMAIN_PLACE_HOLDER` slots, including
-  `OTA_DOMAIN_PLACE_HOLDER`, resolved at runtime from a config fetch. The resolved OTA domain was not
-  observed, only the unresolved placeholder.
+  `OTA_DOMAIN_PLACE_HOLDER`, resolved at runtime from a config fetch. The resolved OTA domain was
+  not observed, only the unresolved placeholder.
 - Confirmed live hosts include `speaker.eufylife.com`, `aiot-sc-api-pr.soundcore.com`,
   `anka-api-us.soundcore.com`, and the `d2htfo7ft368vg.cloudfront.net` asset CDN.
 
@@ -101,8 +104,8 @@ Offline reversing to nail the exact signature, no device runs required. The spec
    `0x979`, `0xc33`.
 2. The exact signed message for that path, in particular whether the JSON body is included, and
    whether the body is signed raw or hashed or encrypted, given `X-Encryption-Info` exists.
-3. Whether `Client-id` and `X-Client-Credential` must be empty for an app level call, and whether any
-   `X-Key-Ident` is required.
+3. Whether `Client-id` and `X-Client-Credential` must be empty for an app level call, and whether
+   any `X-Key-Ident` is required.
 4. Whether logged out sends `gtoken` at all, by resolving the `(param_1 + 0x20) & 1` flag in
    `FUN_102ee542c`.
 
@@ -136,6 +139,6 @@ Preferred base `0x100000000`, so runtime is `main image base + (ghidra - 0x10000
 | `0x10428fed0` | empty string constant |
 | `0x1041c4a31` | Kotlin String TypeInfo |
 
-Header name constants, all Ghidra addresses. `X-Request-Once 0x1042c1830`, `X-Request-Ts 0x1042c1860`,
-`Client-id 0x1042c1af0`, `X-Client-Credential 0x1042c1b20`, `gtoken 0x1042c1b90`,
+Header name constants, all Ghidra addresses. `X-Request-Once 0x1042c1830`, `X-Request-Ts
+0x1042c1860`, `Client-id 0x1042c1af0`, `X-Client-Credential 0x1042c1b20`, `gtoken 0x1042c1b90`,
 `X-Signature 0x1042c1bb0`, `uid 0x1042c1a70`, `app-name 0x1042c1700`, `language 0x1042c1a40`.
