@@ -262,14 +262,21 @@ productLanguage, relationSn`. Our captured body omits `matched` entirely.
   body, and the wire confirmed it, the encrypted `httpBody` grew to `160` bytes, `16` IV plus `144`
   ciphertext, matching the `144` byte modified plaintext. The response was unchanged,
   `needUpdate:false, lastPackage:null`. So `matched` is not a repair lever for this device. Off now.
-- Version spoof, the current lead. The rejection of every lower version is best explained by a per
-  `sn` version the server tracks and cross checks the body `version` against. `scbody.m` rewrites
-  `firmware_version` and `version` from `14.43` to `14.00` across every outgoing body, the telemetry
-  and the check alike, so the tracked version is lowered everywhere at once, via `VERSION_FROM` and
-  `VERSION_TO`. Connect first so the device report goes out, then tap check, ideally twice. If the
-  check flips to `needUpdate:true` with a `lastPackage.url` the tracked version was lowerable. If it
-  stays `Err_InvalidParameter` the server ratchets upward only, or tracks the version by another
-  channel. Awaiting an on device run.
+- Version spoof, and the anti rollback gate is beaten. `scbody.m` rewrites `firmware_version` and
+  `version` across every outgoing body via `VERSION_FROM` and `VERSION_TO`. Spoofing to `14.00`
+  flipped the check response from `402 Err_InvalidParameter`, seen on an offline `14.00` forge, to
+  `res_code 1 SUCCESS`. So the server tracks a per `sn` version from telemetry, and lowering the
+  telemetry lowered it, the check now accepts `14.00`. That is a real finding, the current version
+  is client asserted and spoofable. One report leaks at `14.43`, an `APP_MORE_INFO` device report
+  serialized by HandyJSON or ObjectMapper `toJSONString`, not `NSJSONSerialization`, so the swizzle
+  cannot reach it, and hooking a Swift method needs an inline patch the anti tamper catches. The
+  leak did not block acceptance, so it is not the authoritative report.
+- The wall left, `needUpdate:false` even at `14.00`. Beating the gate is not enough, the server will
+  not serve `14.43` to a device claiming `14.00`. The update is most likely rule based, an upgrade
+  path from a real prior version to `14.43` but not from a fake `14.00`. Next test, spoof to `14.42`,
+  the predecessor, likely a real release with a `14.42` to `14.43` rule. If it returns
+  `needUpdate:true` with a `lastPackage.url` that is the image. If it also returns no update then
+  `14.43` has no successor and the check cannot serve the image, so pivot.
 - Per component. We send `product_component: ALL`. A specific component may behave differently.
 - The simple `/firmware/update` endpoint, `OtaRequestModel`, a second endpoint with its own gating.
 - Telemetry version spoof. Report an old `firmware_version` for our `sn` to move the server's

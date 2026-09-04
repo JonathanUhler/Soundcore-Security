@@ -80,7 +80,7 @@ static const bool INJECT_MATCHED = false;
  * that tracked version everywhere at once, then have the check accepted and an update
  * offered. VERSION_TO must be a plausible lower version. Empty disables the rewrite. */
 static const char *VERSION_FROM = "14.43";
-static const char *VERSION_TO = "14.00";
+static const char *VERSION_TO = "14.42";
 
 /* OTA field markers, same set scjson used. firmwareList and firmware_list are the
  * definitive wrapper keys, the rest are item fields from the SCOTAMultipleItemStruct
