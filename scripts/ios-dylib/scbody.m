@@ -306,6 +306,10 @@ static NSData *rewrite_version_and_sn(NSData *body) {
                    [NSString stringWithFormat:@"\"sn\":\"%@\"", sn_from]
                                          withString:
                    [NSString stringWithFormat:@"\"sn\":\"%@\"", sn_to]];
+    out = [out stringByReplacingOccurrencesOfString:
+                   [NSString stringWithFormat:@"\"device_sn\":\"%@\"", sn_from]
+                                         withString:
+                   [NSString stringWithFormat:@"\"device_sn\":\"%@\"", sn_to]];
     if ([out isEqualToString:s]) {
         return nil;
     }
