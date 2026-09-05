@@ -276,7 +276,7 @@ static NSData *rewrite_version(NSData *body) {
     return [out dataUsingEncoding:NSUTF8StringEncoding];
 }
 */
-static NSData *rewrite_version(NSData *body) {
+static NSData *rewrite_version_and_sn(NSData *body) {
     if (body == nil || VERSION_TO[0] == '\0') {
         return nil;
     }
