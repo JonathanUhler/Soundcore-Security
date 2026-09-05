@@ -29,11 +29,12 @@ capture vehicle for the real body and gathered the static evidence explaining wh
   correctly server side, so the failures are semantic. Downgrade forcing does not work, the server
   rejects a made up old version. Both accepted versions return the same small response, so this
   device is offered no update.
-- Response read. The `scbody.m` deserialization hook captured the decrypted response,
-  `upgrade_list:[{needUpdate:false, lastPackage:null}]`. No package for an up to date device. The
-  version rejection is an anti rollback tamper check against a per SN version the server learns from
-  telemetry, not a simple comparison. Version forcing is out, but untried request levers remain,
-  chiefly the `matched` field the body never sent. See the levers section.
+- Response read, and the plan is closed. The decrypted response is
+  `upgrade_list:[{needUpdate:false, lastPackage:null}]`, no package for a current device. Every
+  request lever was tried. The version spoof beat the anti rollback gate, `402` to `SUCCESS`, but
+  `needUpdate` reads a separate authoritative version the client cannot lower, so no lever yields a
+  package. `14.43` has been the latest for over a year, so nothing newer is served, BLE cannot read
+  the image, and hardware is not being pursued. See the conclusion.
 
 ## Why The Schema Resisted Static Analysis
 
@@ -252,46 +253,66 @@ is validated, not trusted. Lower versions are rejected as `Err_InvalidParameter`
 disagree with what telemetry reported. And `14.44` succeeds as a `registered + 1` tolerance, for a
 device that just updated and has not re reported yet.
 
-## Untried API Levers, The Path Is Not Closed
+## The Levers, Tried And Closed
 
-We were hammering the one field that is tamper checked, `version`, and omitting others. The Android
-`FirmwareRequestModel` is `productCode, sn, version, productComponent, matched: Boolean,
-productLanguage, relationSn`. Our captured body omits `matched` entirely.
+The tamper checked `version` was not the only field, so the other request levers were tried through
+`scbody.m`, which rewrites the outgoing body in process before the app encrypts and signs it.
 
-- `matched: true`. Tested, no effect. The `scbody.m` `INJECT_MATCHED` hook added it to the outgoing
-  body, and the wire confirmed it, the encrypted `httpBody` grew to `160` bytes, `16` IV plus `144`
-  ciphertext, matching the `144` byte modified plaintext. The response was unchanged,
-  `needUpdate:false, lastPackage:null`. So `matched` is not a repair lever for this device. Off now.
-- Version spoof, and the anti rollback gate is beaten. `scbody.m` rewrites `firmware_version` and
-  `version` across every outgoing body via `VERSION_FROM` and `VERSION_TO`. Spoofing to `14.00`
-  flipped the check response from `402 Err_InvalidParameter`, seen on an offline `14.00` forge, to
-  `res_code 1 SUCCESS`. So the server tracks a per `sn` version from telemetry, and lowering the
-  telemetry lowered it, the check now accepts `14.00`. That is a real finding, the current version
-  is client asserted and spoofable. One report leaks at `14.43`, an `APP_MORE_INFO` device report
-  serialized by HandyJSON or ObjectMapper `toJSONString`, not `NSJSONSerialization`, so the swizzle
-  cannot reach it, and hooking a Swift method needs an inline patch the anti tamper catches. The
-  leak did not block acceptance, so it is not the authoritative report.
-- The wall left, `needUpdate:false` even at `14.00`. Beating the gate is not enough, the server will
-  not serve `14.43` to a device claiming `14.00`. The update is most likely rule based, an upgrade
-  path from a real prior version to `14.43` but not from a fake `14.00`. Next test, spoof to `14.42`,
-  the predecessor, likely a real release with a `14.42` to `14.43` rule. If it returns
-  `needUpdate:true` with a `lastPackage.url` that is the image. If it also returns no update then
-  `14.43` has no successor and the check cannot serve the image, so pivot.
-- Per component. We send `product_component: ALL`. A specific component may behave differently.
-- The simple `/firmware/update` endpoint, `OtaRequestModel`, a second endpoint with its own gating.
-- Telemetry version spoof. Report an old `firmware_version` for our `sn` to move the server's
-  tracked version, then re check. Attacks the rollback mechanism directly.
+- `matched: true`, no effect. The `INJECT_MATCHED` hook added it and the wire confirmed it, the
+  encrypted `httpBody` grew to `160` bytes, `16` IV plus `144` ciphertext. The response was
+  unchanged, `needUpdate:false, lastPackage:null`. Not a repair lever for this device.
+- The version spoof beat the anti rollback gate. Rewriting `firmware_version` and `version` across
+  every outgoing body, telemetry and check alike, flipped a `14.00` check from `402
+  Err_InvalidParameter`, the offline forge result, to `res_code 1 SUCCESS`. So the server tracks a
+  per `sn` version from telemetry and the client can lower it, a real finding, the current version
+  is client asserted.
+- But the check version does not drive `needUpdate`. Accepted `14.00`, `14.42`, and `14.44` each
+  returned `needUpdate:false, lastPackage:null`, independent of the claim and of history. So another
+  server side version notion, an authoritative record of the device's true version, decides updates,
+  and the spoof did not move it. The OTA module has only two endpoints, the batch check and `POST
+  v1/speaker/A3910/firmware/update`, and neither is a version report, so no OTA call lowers that
+  record.
 
-Constraint. `matched` and component changes alter the body length, and the keyless XOR forge only
-covers same length edits, since no keystream is known past the captured `129` bytes. So testing
-needs in process request modification, where the app re encrypts, or the recovered `localKey` to
-build any request offline and decrypt every response.
+## Why The Image Is Not Reachable Through The Check
 
-## Fallbacks If The Levers Fail
+Packages do exist. Forum threads discuss P20i firmware, and `14.43` has been the latest for over a
+year. So the catalog is not empty, the device is simply on the latest, and the check serves updates,
+newer than current, of which there are none. The server serves a package only to a device it
+authoritatively believes is behind, the failed sync bud in the Reddit thread, and it will not be
+fooled into believing that about a current device. The check is the wrong tool for pulling the
+current image, and no request lever changes that.
 
-- Opportunistic capture. Leave `scbody.m` with the response hook installed. When Anker next pushes a
-  firmware update, the app's own check returns `lastPackage.url` and the hook logs it decrypted.
-- Hardware. A BLE OTA read from the owned earbuds is a separate plan, outside this cloud scope.
-- The security finding stands on its own. The OTA request auth and body encryption are bypassable in
-  process, replayable, and malleable without any key, and the response decrypts in process, bounded
-  by the server side anti rollback check. Worth writing up for disclosure regardless of the image.
+## Reaching The Image, Off The Check
+
+- Opportunistic capture, armed but unlikely soon. `scbody.m` with the response hook still captures
+  `lastPackage.url` decrypted if Anker ships a newer firmware. With `14.43` a year old, not expected
+  soon.
+- BLE cannot read the image. Jieli BLE OTA is a one way push, single and dual bank, with no
+  documented read or dump command. The wireless side writes firmware, it does not export it.
+- The documented non desolder hardware dump is the Jieli forced download or UBOOT mode over the SoC
+  UART. `kagaimiq/jl-uboot-tool` gives a CLI with `read` and `dump` of flash. It needs pad access
+  and the forced download trigger, and fails if the read lock is set, but does not remove the flash
+  chip. Desolder plus an SPI reader is the last resort. The operator is not pursuing hardware yet.
+
+## Outcome
+
+The OTA request transport is fully broken. The `firmware_list` schema, the `base64( ts || AES-CTR )`
+envelope, the hybrid auth headers, the keyless malleable forgery, the replay, and the in process
+decryption of the response are all recovered, and the anti rollback version gate is spoofable, the
+`402` to `SUCCESS` flip proves it. What is not reachable is the firmware image itself, because the
+server has no package to serve a current device and the authoritative version cannot be rolled back
+through any OTA call. The plan closes here. The transport and anti rollback findings are worth a
+disclosure writeup. The one crypto loose end is the `localKey`, still unrecovered, which would let
+the whole request be built and every response decrypted offline, but it does not change the outcome.
+
+## Addendum, The Serial Probe
+
+One last lever tests the per `sn` pinning directly. The `sn` is 16 hex chars in the body, so it
+forges same length like the version, and `scripts/forge_batch_check.py --sn` does it. The logic, an
+`sn` the server has never seen has no authoritative version pinned, so on a fresh `sn` the check
+version may drive `needUpdate` again. An error on a forged `sn` confirms the server validates the
+serial and pins per device. A `needUpdate:true` on a synthetic `sn` with a low version would mean
+the pin is bypassable and would hand over a `lastPackage.url`. Try both `0000000000000000` and a
+well formed `3949000000000000`, keeping the real `A3949` product prefix, to separate a format check
+from a database lookup. Keep the serial synthetic, do not impersonate a real device. This is the one
+test that could reopen the path, pending a fresh clean capture and a send.

