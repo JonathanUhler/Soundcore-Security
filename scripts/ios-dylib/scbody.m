@@ -35,14 +35,17 @@
  *     needUpdate and any lastPackage url, with no key needed.
  *
  * Mostly the hooks only observe, but the serialization hook can also modify the
- * outgoing body before the app encrypts and signs it, for two active tests set at the
- * top of the file. INJECT_MATCHED adds matched:true to the firmware_list request, and
- * VERSION_TO rewrites the firmware_version and version fields across every outgoing
- * body, the telemetry and the check alike, to lower the version the server tracks for
- * this sn. Both are data only changes, the app does its own crypto, so the anti tamper
- * sees nothing, and auth is body independent so the token and unique-sign still verify.
- * A captured body is logged uncapped, chunked across os_log lines exactly like scjson,
- * and deduped by content so a body logs once across many taps.
+ * outgoing body before the app encrypts and signs it, for the active tests set at the
+ * top of the file. strip_tamper_events drops the reinforcement SDK's three tamper
+ * telemetry events from the object graph before serialization. rewrite_body then
+ * rewrites identifying values, the version, serial, MAC, and analytics anonymous id,
+ * across every outgoing body, the telemetry and the check alike, because the backend
+ * cross references telemetry so a value must move everywhere at once. INJECT_MATCHED
+ * adds matched:true to the firmware_list request. All are data only changes, the app
+ * does its own crypto, so the anti tamper sees nothing, and auth is body independent so
+ * the token and unique-sign still verify. A captured body is logged uncapped, chunked
+ * across os_log lines exactly like scjson, and deduped by content so a body logs once
+ * across many taps.
  */
 
 #import <Foundation/Foundation.h>
@@ -72,13 +75,14 @@ static os_unfair_lock g_lock = OS_UNFAIR_LOCK_INIT;
  * injects "matched":true into the outgoing firmware_list body. */
 static const bool INJECT_MATCHED = false;
 
-/* Active test two, the version spoof. When VERSION_TO is non-empty, every outgoing
- * body has its firmware_version and version fields rewritten from VERSION_FROM to
- * VERSION_TO before the app encrypts and sends it, across the device report telemetry
- * and the upgrade check alike. The server rejects a lower version in the check alone
- * because it cross checks against a version it tracks per sn, so the aim is to lower
- * that tracked version everywhere at once, then have the check accepted and an update
- * offered. VERSION_TO must be a plausible lower version. Empty disables the rewrite. */
+/* Active test two, the value scrub. rewrite_body rewrites each FROM value to its TO
+ * value in every outgoing body before the app encrypts and sends it, across the device
+ * report telemetry and the upgrade check alike. The backend cross references telemetry,
+ * so lowering the version only in the check is rejected but lowering it everywhere at
+ * once is accepted. The serial, MAC, and analytics anonymous id are scrubbed the same
+ * way to strip identity the backend could pin on. All are data only changes, the app
+ * does its own crypto so the anti tamper sees nothing, and auth is body independent so
+ * the token and unique-sign still verify. An empty FROM disables that one rewrite. */
 static const char *VERSION_FROM = "14.43";
 static const char *VERSION_TO = "14.42";
 
@@ -89,6 +93,28 @@ static const char *MAC_UPPER_FROM = "F4:B6:2D:E5:BD:E7";
 static const char *MAC_UPPER_TO = "00:00:00:00:00:00";
 static const char *MAC_LOWER_FROM = "f4:b6:2d:e5:bd:e7";
 static const char *MAC_LOWER_TO = "00:00:00:00:00:00";
+
+/* The analytics anonymous id. anonymous_id and distinct_id come from the
+ * SensorsAnalytics SDK and are the only identifiers that survive an app reinstall,
+ * because the SDK keychain-persists them on iOS. They ride the analytics collector,
+ * not the firmware host, but the backend cross references telemetry, so a stable
+ * device identity is scrubbed to a synthetic one. The value is replaced globally, by
+ * its literal, so anonymous_id, distinct_id, and $identity_anonymous_id all change
+ * together. Empty ANON_FROM disables the scrub. */
+static const char *ANON_FROM = "25175005-856F-4AAB-A276-01988F6459F5";
+static const char *ANON_TO = "7F3C1A2B-4D5E-4F6A-9B8C-0D1E2F3A4B5C";
+
+/* Active test three, the tamper telemetry strip. On detecting this dylib the
+ * reinforcement SDK emits three telemetry events. When STRIP_TAMPER is true they are
+ * dropped from any outgoing body before it is serialized, so the backend never receives
+ * a tamper flag for this install. The names are matched exactly against event.name. */
+static const bool STRIP_TAMPER = true;
+static const char *const TAMPER_EVENT_NAMES[] = {
+    "APP_FIRM_NON_APPSTORE_DOWNLOAD",
+    "APP_FIRM_SIGNATURE_TAMPER",
+    "JMDetectionResultJailBreak",
+};
+#define TAMPER_NAME_COUNT ((int)(sizeof(TAMPER_EVENT_NAMES) / sizeof(TAMPER_EVENT_NAMES[0])))
 
 /* OTA field markers, same set scjson used. firmwareList and firmware_list are the
  * definitive wrapper keys, the rest are item fields from the SCOTAMultipleItemStruct
@@ -245,88 +271,96 @@ static NSData *inject_matched(NSData *body) {
     return out;
 }
 
-/* Rewrite the firmware_version and version fields of an outgoing body from
- * VERSION_FROM to VERSION_TO, returning a copy, or nil if neither field is present or
- * nothing changed. The firmware_version replacement runs first, and the version
- * replacement carries a leading quote, so it does not match inside firmware_version.
- * The app re-encrypts, so the replacement need not preserve length. */
-/*
-static NSData *rewrite_version(NSData *body) {
-    if (body == nil || VERSION_TO[0] == '\0') {
-        return nil;
+/* Drop the reinforcement SDK's anti tamper telemetry from an outgoing object before it
+ * is serialized. The telemetry is a top level dictionary with an "events" array, each
+ * event a dictionary with a "name". Any event whose name is in TAMPER_EVENT_NAMES is
+ * removed, and a shallow mutable copy of the dictionary with the filtered array is
+ * returned, or nil if nothing matched so the caller serializes the original untouched.
+ * This is object graph editing, still data only, and it yields guaranteed valid JSON,
+ * unlike excising an object from the serialized string. */
+static bool is_tamper_name(NSString *name) {
+    for (int i = 0; i < TAMPER_NAME_COUNT; i++) {
+        if ([name isEqualToString:@(TAMPER_EVENT_NAMES[i])]) {
+            return true;
+        }
     }
-    size_t n = (size_t)body.length;
-    const char *b = (const char *)body.bytes;
-    if (b == NULL || n < 8 || n > MAX_BODY || !mem_contains(b, n, "version")) {
-        return nil;
-    }
-    NSString *s = [[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
-    if (s == nil) {
-        return nil;
-    }
-    NSString *from = [NSString stringWithUTF8String:VERSION_FROM];
-    NSString *to = [NSString stringWithUTF8String:VERSION_TO];
-    NSString *out = s;
-    out = [out stringByReplacingOccurrencesOfString:
-                   [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", from]
-                                         withString:
-                   [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", to]];
-    out = [out stringByReplacingOccurrencesOfString:
-                   [NSString stringWithFormat:@"\"version\":\"%@\"", from]
-                                         withString:
-                   [NSString stringWithFormat:@"\"version\":\"%@\"", to]];
-    if ([out isEqualToString:s]) {
-        return nil;
-    }
-    return [out dataUsingEncoding:NSUTF8StringEncoding];
+    return false;
 }
-*/
-static NSData *rewrite_version_and_sn(NSData *body) {
-    if (body == nil || VERSION_TO[0] == '\0') {
+
+static id strip_tamper_events(id obj) {
+    if (!STRIP_TAMPER || ![obj isKindOfClass:[NSDictionary class]]) {
         return nil;
     }
-    size_t n = (size_t)body.length;
-    const char *b = (const char *)body.bytes;
-    if (b == NULL || n < 8 || n > MAX_BODY) {
+    NSDictionary *dict = (NSDictionary *)obj;
+    id events = dict[@"events"];
+    if (![events isKindOfClass:[NSArray class]]) {
+        return nil;
+    }
+    NSArray *in = (NSArray *)events;
+    NSMutableArray *kept = [NSMutableArray arrayWithCapacity:in.count];
+    NSMutableArray *removed = [NSMutableArray array];
+    for (id e in in) {
+        id name = [e isKindOfClass:[NSDictionary class]] ? ((NSDictionary *)e)[@"name"] : nil;
+        if ([name isKindOfClass:[NSString class]] && is_tamper_name(name)) {
+            [removed addObject:name];
+            continue;
+        }
+        [kept addObject:e];
+    }
+    if (removed.count == 0) {
+        return nil;
+    }
+    NSMutableDictionary *out = [dict mutableCopy];
+    out[@"events"] = kept;
+    os_log(g_log, "%{public}s STRIP removed %lu tamper event(s): %{public}s", TAG,
+           (unsigned long)removed.count, [[removed componentsJoinedByString:@","] UTF8String]);
+    return out;
+}
+
+/* Rewrite identifying values in an outgoing serialized body, returning a modified copy
+ * or nil if nothing changed. The version is field qualified so only the true version
+ * fields move and a value like an app version is left alone. The serial, MAC, and
+ * analytics anonymous id are scrubbed by their literal value, so every field that
+ * carries them, "sn", "device_sn", "identity_deviceid_sn", "anonymous_id",
+ * "distinct_id", "$identity_anonymous_id", is caught at once. The app re-encrypts, so
+ * the replacement need not preserve length, and auth is body independent so the token
+ * and unique-sign still verify. An empty FROM disables that one rewrite. */
+static NSData *rewrite_body(NSData *body) {
+    if (body == nil) {
+        return nil;
+    }
+    NSUInteger n = body.length;
+    if (n < 8 || n > MAX_BODY) {
         return nil;
     }
     NSString *s = [[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
     if (s == nil) {
         return nil;
     }
-    NSString *version_from = [NSString stringWithUTF8String:VERSION_FROM];
-    NSString *version_to = [NSString stringWithUTF8String:VERSION_TO];
-    NSString *sn_from = [NSString stringWithUTF8String:SN_FROM];
-    NSString *sn_to = [NSString stringWithUTF8String:SN_TO];
-    NSString *mac_upper_from = [NSString stringWithUTF8String:MAC_UPPER_FROM];
-    NSString *mac_upper_to = [NSString stringWithUTF8String:MAC_UPPER_TO];
-    NSString *mac_lower_from = [NSString stringWithUTF8String:MAC_LOWER_FROM];
-    NSString *mac_lower_to = [NSString stringWithUTF8String:MAC_LOWER_TO];
+    NSMutableArray<NSArray<NSString *> *> *subs = [NSMutableArray array];
+    if (strlen(VERSION_FROM) > 0) {
+        NSString *vf = @(VERSION_FROM), *vt = @(VERSION_TO);
+        [subs addObject:@[ [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", vf],
+                           [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", vt] ]];
+        [subs addObject:@[ [NSString stringWithFormat:@"\"version\":\"%@\"", vf],
+                           [NSString stringWithFormat:@"\"version\":\"%@\"", vt] ]];
+    }
+    if (strlen(SN_FROM) > 0) {
+        [subs addObject:@[ @(SN_FROM), @(SN_TO) ]];
+    }
+    if (strlen(MAC_UPPER_FROM) > 0) {
+        [subs addObject:@[ @(MAC_UPPER_FROM), @(MAC_UPPER_TO) ]];
+    }
+    if (strlen(MAC_LOWER_FROM) > 0) {
+        [subs addObject:@[ @(MAC_LOWER_FROM), @(MAC_LOWER_TO) ]];
+    }
+    if (strlen(ANON_FROM) > 0) {
+        [subs addObject:@[ @(ANON_FROM), @(ANON_TO) ]];
+    }
     NSString *out = s;
-    out = [out stringByReplacingOccurrencesOfString:
-                   [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", version_from]
-                                         withString:
-                   [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", version_to]];
-    out = [out stringByReplacingOccurrencesOfString:
-                   [NSString stringWithFormat:@"\"version\":\"%@\"", version_from]
-                                         withString:
-                   [NSString stringWithFormat:@"\"version\":\"%@\"", version_to]];
-    out = [out stringByReplacingOccurrencesOfString:
-                   [NSString stringWithFormat:@"\"sn\":\"%@\"", sn_from]
-                                         withString:
-                   [NSString stringWithFormat:@"\"sn\":\"%@\"", sn_to]];
-    out = [out stringByReplacingOccurrencesOfString:
-                   [NSString stringWithFormat:@"\"device_sn\":\"%@\"", sn_from]
-                                         withString:
-                   [NSString stringWithFormat:@"\"device_sn\":\"%@\"", sn_to]];
-    out = [out stringByReplacingOccurrencesOfString:
-                   [NSString stringWithFormat:@"\"mac\":\"%@\"", mac_upper_from]
-                                         withString:
-                   [NSString stringWithFormat:@"\"mac\":\"%@\"", mac_upper_to]];
-    out = [out stringByReplacingOccurrencesOfString:
-                   [NSString stringWithFormat:@"\"device_mac\":\"%@\"", mac_lower_from]
-                                         withString:
-                   [NSString stringWithFormat:@"\"device_mac\":\"%@\"", mac_lower_to]];
+    for (NSArray<NSString *> *pair in subs) {
+        out = [out stringByReplacingOccurrencesOfString:pair[0] withString:pair[1]];
+    }
     if ([out isEqualToString:s]) {
         return nil;
     }
@@ -335,15 +369,25 @@ static NSData *rewrite_version_and_sn(NSData *body) {
 
 /* Swizzle of +[NSJSONSerialization dataWithJSONObject:options:error:]. Calls the
  * original by saved IMP, never by objc_msgSend, so there is no recursion. It applies
- * the active tests, the matched injection and the version spoof, to the outgoing body
- * before the app encrypts and sends it. */
+ * the active tests, the tamper event strip, the value scrub, and the matched
+ * injection, to the outgoing body before the app encrypts and sends it. */
 typedef NSData *(*json_imp_t)(id, SEL, id, NSUInteger, NSError **);
 static json_imp_t g_orig_json;
 
 static NSData *hook_dataWithJSONObject(id self, SEL _cmd, id obj, NSUInteger opt, NSError **err) {
-    NSData *result = g_orig_json(self, _cmd, obj, opt, err);
+    /* Object graph edit before serialization, drop the anti tamper telemetry events so
+     * the serialized body the app encrypts never carries a tamper flag. */
+    id to_serialize = obj;
     @try {
-        consider(result, "json", NULL, false);
+        id cleaned = strip_tamper_events(obj);
+        if (cleaned != nil) {
+            to_serialize = cleaned;
+        }
+    } @catch (__unused NSException *e) {
+    }
+    NSData *result = g_orig_json(self, _cmd, to_serialize, opt, err);
+    @try {
+        consider(result, to_serialize == obj ? "json" : "json-strip", NULL, to_serialize != obj);
         NSData *mod = result;
         if (INJECT_MATCHED) {
             NSData *m = inject_matched(mod);
@@ -351,7 +395,7 @@ static NSData *hook_dataWithJSONObject(id self, SEL _cmd, id obj, NSUInteger opt
                 mod = m;
             }
         }
-        NSData *v = rewrite_version_and_sn(mod);
+        NSData *v = rewrite_body(mod);
         if (v != nil) {
             mod = v;
         }
