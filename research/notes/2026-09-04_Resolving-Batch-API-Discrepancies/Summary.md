@@ -140,3 +140,56 @@ Remaining routes to the image, unchanged from last session.
 - The CI `temp_fireware` endpoint, pending analysis of whether it is reachable and how it is gated.
 - Hardware, Jieli UBOOT or forced download over UART with `jl-uboot-tool`, or desolder plus SPI.
 - BLE cannot read the image, it is a one way push.
+
+## Addendum, A30 Cross-Device Validation
+
+A second device, the Sleep A30, product code D1301S, was captured to test whether the batch check
+behavior is P20i specific or general. The A30 is higher end, BLE based, and importantly the operator
+has updated its firmware before, so the API is known to serve it packages. Both the buds, `01.07`,
+and the charging case, `01.01`, are on the latest. The capture is `logs/a30_1.log`, taken with
+`scbody.m` in the new `MONITOR_ONLY` read only mode, which worked as intended, no edits and full
+capture.
+
+The result is the same wall. The A30 uses the exact same endpoint,
+`speaker.eufylife.com/api/v2/speaker/firmware/upgrade_check/batch`, the same encrypted envelope
+transport, and the same schema. The real check sends two items, the buds at `01.07` and the case at
+`01.01` with the buds sn as `relation_sn`, and the response returns `needUpdate:false,
+lastPackage:null` for both. A later single bud check repeats it. So a device with a real update
+history, currently on the latest, is offered nothing, exactly like the P20i.
+
+This closes the last doubt. The batch check is server inventory gated for every product, not a P20i
+quirk and not a client controllable pin. The A30 firmware body carries only `sn`, `version`,
+`product_code`, `product_component`, and `relation_sn`, no MAC, no UUID, no account, so there is no
+field to move that changes the answer.
+
+Other observations from the A30 capture, none of which are the device image.
+
+- `sound_mix/firmware/find` is a second endpoint the P20i never called, but its "firmware" is sleep
+  sound presets, not the SoC image. The request carries `ids` and `firm_preset_ids`.
+- `/resource/music/sleep_list/get/for_product` returns the sleep sound catalog. The sounds are plain
+  files on the CDN, for example `d2htfo7ft368vg.cloudfront.net/music_resource/ci/..._Keyboard.wav`
+  and `anker-speaker.s3.us-west-2.amazonaws.com/white_noise/A6611/ci/wav/Train.wav`, each with an
+  `md5` field. The A30 resource bundles `d1301_home_audio.zip` and `d1301_home_resource.zip` sit at
+  `cloudfront.net/upload_file/prod/` and download without auth. These are content and assets, not
+  the Jieli firmware.
+- The large base64 `resp` blobs near the firmware captures are encrypted content list envelopes,
+  sound presets, sleep list, app resources, not firmware. One large decrypted `resp` is a flat array
+  of numbers, most likely audio waveform data for the sound player, not UI coordinates.
+- `dts-log.anker.com/sa?project=production` is the SensorsAnalytics collector. Its body is
+  `crc=...&gzip=1&data_list=<gzip+base64>`, the batched anonymous id events. This is a third host,
+  separate from the firmware API and the `log.eufylife.com` HDFS sink.
+
+## Addendum, The A30 MAC Field Is A Hex Encoded UUID
+
+On the A30 the telemetry `mac` field is not a MAC. It is a long colon separated hex string, for
+example `30:33:45:44:31:36:35:41:2D:...`, which decodes byte by byte as ASCII to the UUID
+`03ED165A-9DDF-3A76-EC03-CC0B31AF80C1`. On iOS the app cannot read a Bluetooth MAC, so for this BLE
+device it appears to take a UUID string and hex encode each character into the MAC shaped field. The
+P20i, classic Bluetooth, reported a real MAC instead.
+
+Searching `logs/a30_1.log`, the decoded UUID appears nowhere in plaintext, zero hits for the full
+value or any distinctive substring. Only the hex encoded form appears, in the `mac` field of
+telemetry events, and never in a firmware or upgrade body. It is also distinct from every other
+identifier in the log, the SA `$device_id` idfv, the `device_id`, the `terminal-id`, and the SA
+`uuid`. So it is a separate identifier, most likely the BLE peripheral identifier, that the app only
+ever emits in this encoded telemetry form. It is not a firmware pin.
