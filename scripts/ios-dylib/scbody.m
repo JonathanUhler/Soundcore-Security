@@ -85,10 +85,10 @@ static const char *VERSION_TO = "14.42";
 static const char *SN_FROM = "3949E7BDE52DB6F4";
 static const char *SN_TO = "3949000000000000";
 
-const const char *MAC_UPPER_FROM = "F4:B6:2D:E5:BD:E7";
-const const char *MAC_UPPER_TO = "00:00:00:00:00:00";
-const const char *MAC_LOWER_FROM = "f4:b6:2d:e5:bd:e7";
-const const char *MAC_LOWER_TO = "00:00:00:00:00:00";
+static const char *MAC_UPPER_FROM = "F4:B6:2D:E5:BD:E7";
+static const char *MAC_UPPER_TO = "00:00:00:00:00:00";
+static const char *MAC_LOWER_FROM = "f4:b6:2d:e5:bd:e7";
+static const char *MAC_LOWER_TO = "00:00:00:00:00:00";
 
 /* OTA field markers, same set scjson used. firmwareList and firmware_list are the
  * definitive wrapper keys, the rest are item fields from the SCOTAMultipleItemStruct
