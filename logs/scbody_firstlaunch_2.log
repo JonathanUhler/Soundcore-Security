@@ -1,0 +1,486 @@
+2026-09-04 18:27:35.141918 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY loaded, installing swizzles
+2026-09-04 18:27:35.141935 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY swizzled +[NSJSONSerialization ...]
+2026-09-04 18:27:35.142015 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY swizzled +[NSJSONSerialization ...]
+2026-09-04 18:27:35.142024 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY swizzled -[NSMutableURLRequest ...]
+2026-09-04 18:27:35.142037 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY swizzled -[NSMutableURLRequest ...]
+2026-09-04 18:27:35.142045 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY swizzled -[NSMutableURLRequest ...]
+2026-09-04 18:27:35.142054 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY ready, tap check for update
+2026-09-04 18:27:35.546013 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #1 src=json url=(none) len=949 score=2 BEGIN
+2026-09-04 18:27:35.546043 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #1 seg 1/6 {"themeMode":true,"url":"https:\/\/log.eufylife.com\/push_log_hdfs","route":"\/","touristId":"","isCnApp":false,"header":{"Openudid":"1BCD1762-E670-4625-93C5-BD
+2026-09-04 18:27:35.546049 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #1 seg 2/6 4607822125","timestamp":"1788571655","country":"US","terminal-id":"1BCD1762-E670-4625-93C5-BD4607822125","User-Agent":"Soundcore-iOS-5.0.02","phone_virtual_id":
+2026-09-04 18:27:35.546582 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #1 seg 3/6 "1BCD1762-E670-4625-93C5-BD4607822125","X-App-Key":"soundcore","sys_version":"26.5.1","language":"en","token":"dcc192465061139d27a8febf946d2b99","AnkerBG":"SPEA
+2026-09-04 18:27:35.546589 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #1 seg 4/6 KER","timezone":"America\/Los_Angeles"},"parameters":{"phone_brand":"Apple","events":[],"phone_model":"iPhone18,5","mac":"","product_code":"","sn":"","phone_nam
+2026-09-04 18:27:35.546596 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #1 seg 5/6 e":"iPhone","firmware_version":"","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id":"","product_name":"","device_id":"","sys_type":"iOS","country":"US","s
+2026-09-04 18:27:35.546604 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #1 seg 6/6 ys_version":"26.5.1","region":"US","http_user_agent":"Soundcore-iOS-5.0.02"},"app_env":"mp","safeAreaTop":"47.0","safeAreaBottom":"34.0","userId":""}
+2026-09-04 18:27:35.546611 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #1 END
+2026-09-04 18:27:38.915466 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #2 src=json url=(none) len=403 score=2 BEGIN
+2026-09-04 18:27:38.915476 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #2 seg 1/3 {"events":[{"value_string":"","module":"APP_FIRM","time":"1788571658","mac":"","device_id":"","product_code":"none","sn":"","type":"1","name":"APP_FIRM_NON_APPS
+2026-09-04 18:27:38.915487 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #2 seg 2/3 TORE_DOWNLOAD"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD460782212
+2026-09-04 18:27:38.915497 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #2 seg 3/3 5","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:27:38.915508 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #2 END
+2026-09-04 18:27:38.916274 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #3 src=json url=(none) len=398 score=2 BEGIN
+2026-09-04 18:27:38.916292 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #3 seg 1/3 {"events":[{"value_string":"","module":"APP_FIRM","time":"1788571658","mac":"","device_id":"","product_code":"none","sn":"","type":"1","name":"APP_FIRM_SIGNATUR
+2026-09-04 18:27:38.916309 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #3 seg 2/3 E_TAMPER"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","u
+2026-09-04 18:27:38.916329 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #3 seg 3/3 ser_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:27:38.916354 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #3 END
+2026-09-04 18:27:38.917421 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #4 src=json url=(none) len=399 score=2 BEGIN
+2026-09-04 18:27:38.917440 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #4 seg 1/3 {"events":[{"value_string":"","module":"APP_FIRM","time":"1788571658","mac":"","device_id":"","product_code":"none","sn":"","type":"1","name":"JMDetectionResult
+2026-09-04 18:27:38.917463 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #4 seg 2/3 JailBreak"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","
+2026-09-04 18:27:38.917481 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #4 seg 3/3 user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:27:38.917493 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #4 END
+2026-09-04 18:27:43.841365 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #5 src=json url=(none) len=402 score=2 BEGIN
+2026-09-04 18:27:43.841373 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #5 seg 1/3 {"events":[{"value_string":"","module":"USERCENTER","time":"1788571663","device_id":"","mac":"","product_code":"none","sn":"","type":"0","name":"APP_UNCON_DEVIC
+2026-09-04 18:27:43.841422 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #5 seg 2/3 E_LOGIN_SKIP"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:27:43.841433 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #5 seg 3/3 ","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:27:43.841442 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #5 END
+2026-09-04 18:27:44.656886 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #6 src=json url=(none) len=403 score=2 BEGIN
+2026-09-04 18:27:44.656894 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #6 seg 1/3 {"events":[{"value_string":"","module":"USERCENTER","time":"1788571664","mac":"","device_id":"","product_code":"none","sn":"","type":"1","name":"APP_USER_RESEAR
+2026-09-04 18:27:44.656905 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #6 seg 2/3 CH_IMPRESSION"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD460782212
+2026-09-04 18:27:44.656911 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #6 seg 3/3 5","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:27:44.656918 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #6 END
+2026-09-04 18:27:56.233847 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #7 src=json url=(none) len=466 score=2 BEGIN
+2026-09-04 18:27:56.233855 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #7 seg 1/3 {"events":[{"value_string":"{\"num\":\"1\",\"code\":\"A3949\",\"new_pn\":\"\"}","module":"RECOMMENDED_DEVICE","time":"1788571676","mac":"","device_id":"","produ
+2026-09-04 18:27:56.233864 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #7 seg 2/3 ct_code":"none","sn":"","type":"1","name":"RECOMMENDED_NEW_DEVICE_CONNECTION"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_
+2026-09-04 18:27:56.233871 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #7 seg 3/3 model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:27:56.233877 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #7 END
+2026-09-04 18:28:03.165139 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #12 src=resp url=(none) len=243 score=2 BEGIN
+2026-09-04 18:28:03.165146 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #12 seg 1/2 [{"sn":"","app_language":"en","events":[{"type":"CONNECT_BLUETOOTH_SUCCESS","value":1}],"product_code":"A3949","mac":"F4:B6:2D:E5:BD:E7","phone_virtual_id":"1BC
+2026-09-04 18:28:03.165153 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #12 seg 2/2 D1762-E670-4625-93C5-BD4607822125","firmware_version":"","u_id":"","country":"US"}]
+2026-09-04 18:28:03.165159 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #12 END
+2026-09-04 18:28:03.165467 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #13 src=json url=(none) len=286 score=2 BEGIN
+2026-09-04 18:28:03.165485 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #13 seg 1/2 {"details":[{"events":[{"type":"CONNECT_BLUETOOTH_SUCCESS","value":1}],"firmware_version":"","product_code":"A3949","mac":"F4:B6:2D:E5:BD:E7","country":"US","sn
+2026-09-04 18:28:03.165493 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #13 seg 2/2 ":"","u_id":"","app_language":"en","phone_virtual_id":"1BCD1762-E670-4625-93C5-BD4607822125"}],"endpoint":"03012651050020001"}
+2026-09-04 18:28:03.165500 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #13 END
+2026-09-04 18:28:03.168554 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #14 src=json url=(none) len=1066 score=2 BEGIN
+2026-09-04 18:28:03.168570 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #14 seg 1/7 {"themeMode":true,"route":"\/d3200\/homePage","safeAreaTop":"47.0","touristId":"766f9d419416469dacce54513533fa76","parameters":{"events":[],"product_code":"A394
+2026-09-04 18:28:03.168584 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #14 seg 2/7 9","device_id":"","http_user_agent":"Soundcore-iOS-5.0.02","phone_model":"iPhone18,5","sys_type":"iOS","product_name":"P20i","phone_brand":"Apple","user_id":"",
+2026-09-04 18:28:03.168591 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #14 seg 3/7 "phone_name":"iPhone","mac":"F4:B6:2D:E5:BD:E7","sys_version":"26.5.1","firmware_version":"","country":"US","sn":"","region":"US","uuid":"1BCD1762-E670-4625-93C
+2026-09-04 18:28:03.168598 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #14 seg 4/7 5-BD4607822125"},"safeAreaBottom":"34.0","url":"https:\/\/log.eufylife.com\/push_log_hdfs","app_env":"mp","userId":"","isCnApp":false,"header":{"language":"en",
+2026-09-04 18:28:03.168606 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #14 seg 5/7 "Openudid":"1BCD1762-E670-4625-93C5-BD4607822125","timestamp":"1788571683","X-App-Key":"soundcore","Gtoken":"d4ffabf96f02f8d4097a4b5a1927386f","token":"027074cb
+2026-09-04 18:28:03.168613 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #14 seg 6/7 8d9eccae848b312067df9e54","phone_virtual_id":"1BCD1762-E670-4625-93C5-BD4607822125","terminal-id":"1BCD1762-E670-4625-93C5-BD4607822125","sys_version":"26.5.1",
+2026-09-04 18:28:03.168619 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #14 seg 7/7 "User-Agent":"Soundcore-iOS-5.0.02","AnkerBG":"SPEAKER","country":"US","timezone":"America\/Los_Angeles"}}
+2026-09-04 18:28:03.168626 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #14 END
+2026-09-04 18:28:03.350374 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #15 src=json url=(none) len=595 score=2 BEGIN
+2026-09-04 18:28:03.350391 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #15 seg 1/4 {"events":[{"value_string":"00010303000031342e343331342e343333393439453742444535324442364634000078787878787878780000000000000000000000000e0166016601320133012101
+2026-09-04 18:28:03.350406 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #15 seg 2/4 20ffffff610001ffffffffffffffffffffffffffffffbb","module":"HOME_PAGE","time":"1788571683","mac":"F4:B6:2D:E5:BD:E7","device_id":"","product_code":"A3949","sn":""
+2026-09-04 18:28:03.350416 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #15 seg 3/4 ,"type":"1","name":"DEV_DATA_COMMAND_ALL_INFO"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BC
+2026-09-04 18:28:03.350425 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #15 seg 4/4 D1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.350442 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #15 END
+2026-09-04 18:28:03.359644 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 204 -> 204 bytes
+2026-09-04 18:28:03.359713 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #16 src=json-mod url=(none) len=204 score=1 BEGIN
+2026-09-04 18:28:03.359747 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #16 seg 1/2 {"terminal_id":"1BCD1762-E670-4625-93C5-BD4607822125","device":[{"device_sn":"3949000000000000","device_mac":"f4:b6:2d:e5:bd:e7","firmware_version":"14.42","lin
+2026-09-04 18:28:03.359771 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #16 seg 2/2 k_time":1788571683,"product_code":"A3949"}]}
+2026-09-04 18:28:03.359804 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #16 END
+2026-09-04 18:28:03.360279 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #17 src=json url=(none) len=1196 score=2 BEGIN
+2026-09-04 18:28:03.360648 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #17 seg 1/8 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":4050954876,"event":"$BindID","time":1788571683358,"identities":{"$identity_idfv":"4C63CC30-EF
+2026-09-04 18:28:03.360733 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #17 seg 2/8 C0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F-4AAB-A276-019
+2026-09-04 18:28:03.360751 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #17 seg 3/8 88F6459F5"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$screen_width":390,"$app_version
+2026-09-04 18:28:03.360790 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #17 seg 4/8 ":"5.0.02","country":"US","sn":"3949E7BDE52DB6F4","is_secret":false,"$is_first_day":true,"$model":"iPhone18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E23
+2026-09-04 18:28:03.360798 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #17 seg 5/8 2","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$network_type":"WIFI","firmware_version":"14.43","device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$app_name
+2026-09-04 18:28:03.360857 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #17 seg 6/8 ":"soundcore","$wifi":true,"$timezone_offset":420,"mac":"F4:B6:2D:E5:BD:E7","app_line":"SoundCore","$referrer_title":"P20i","$screen_height":844,"$lib_method":"
+2026-09-04 18:28:03.360866 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #17 seg 7/8 code","$lib_version":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},
+2026-09-04 18:28:03.360874 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #17 seg 8/8 "distinct_id":"25175005-856F-4AAB-A276-01988F6459F5","type":"track_id_bind"}
+2026-09-04 18:28:03.360882 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #17 END
+2026-09-04 18:28:03.360891 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 1196 -> 1196 bytes
+2026-09-04 18:28:03.360917 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #18 src=json-mod url=(none) len=1196 score=2 BEGIN
+2026-09-04 18:28:03.360937 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #18 seg 1/8 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":4050954876,"event":"$BindID","time":1788571683358,"identities":{"$identity_idfv":"4C63CC30-EF
+2026-09-04 18:28:03.360945 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #18 seg 2/8 C0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F-4AAB-A276-019
+2026-09-04 18:28:03.360972 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #18 seg 3/8 88F6459F5"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$screen_width":390,"$app_version
+2026-09-04 18:28:03.361042 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #18 seg 4/8 ":"5.0.02","country":"US","sn":"3949000000000000","is_secret":false,"$is_first_day":true,"$model":"iPhone18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E23
+2026-09-04 18:28:03.361054 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #18 seg 5/8 2","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$network_type":"WIFI","firmware_version":"14.42","device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$app_name
+2026-09-04 18:28:03.361094 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #18 seg 6/8 ":"soundcore","$wifi":true,"$timezone_offset":420,"mac":"F4:B6:2D:E5:BD:E7","app_line":"SoundCore","$referrer_title":"P20i","$screen_height":844,"$lib_method":"
+2026-09-04 18:28:03.361103 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #18 seg 7/8 code","$lib_version":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},
+2026-09-04 18:28:03.361111 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #18 seg 8/8 "distinct_id":"25175005-856F-4AAB-A276-01988F6459F5","type":"track_id_bind"}
+2026-09-04 18:28:03.361121 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #18 END
+2026-09-04 18:28:03.362107 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 515 -> 515 bytes
+2026-09-04 18:28:03.362152 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #19 src=json-mod url=(none) len=515 score=1 BEGIN
+2026-09-04 18:28:03.362163 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #19 seg 1/4 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":843988126,"time":1788571683359,"identities":{"$identity_idfv":"4C63CC30-EFC0-4192-B13A-5A331B
+2026-09-04 18:28:03.362172 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #19 seg 2/4 F2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5"},"proper
+2026-09-04 18:28:03.362182 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #19 seg 3/4 ties":{"sn":"3949000000000000"},"distinct_id":"25175005-856F-4AAB-A276-01988F6459F5","lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_me
+2026-09-04 18:28:03.362196 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #19 seg 4/4 thod":"code"},"type":"profile_set"}
+2026-09-04 18:28:03.362214 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #19 END
+2026-09-04 18:28:03.366194 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #20 src=json url=(none) len=435 score=2 BEGIN
+2026-09-04 18:28:03.366208 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #20 seg 1/3 {"events":[{"value_string":"{\"type\":\"nps\"}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949E7B
+2026-09-04 18:28:03.366217 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #20 seg 2/3 DE52DB6F4","type":"1","name":"APP_POP_REQUEST"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BC
+2026-09-04 18:28:03.366225 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #20 seg 3/3 D1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.366270 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #20 END
+2026-09-04 18:28:03.366279 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 435 -> 435 bytes
+2026-09-04 18:28:03.366288 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #21 src=json-mod url=(none) len=435 score=2 BEGIN
+2026-09-04 18:28:03.366298 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #21 seg 1/3 {"events":[{"value_string":"{\"type\":\"nps\"}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949000
+2026-09-04 18:28:03.366328 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #21 seg 2/3 000000000","type":"1","name":"APP_POP_REQUEST"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BC
+2026-09-04 18:28:03.366337 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #21 seg 3/3 D1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.366361 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #21 END
+2026-09-04 18:28:03.366581 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #22 src=json url=(none) len=1305 score=2 BEGIN
+2026-09-04 18:28:03.366604 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #22 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":2675153831,"event":"SC_HOME_DEVICE_RESULT","time":1788571683361,"identities":{"$identity_idfv
+2026-09-04 18:28:03.366654 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #22 seg 2/9 ":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F
+2026-09-04 18:28:03.366666 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #22 seg 3/9 -4AAB-A276-01988F6459F5"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$app_id":"com.oceanwing.SoundC
+2026-09-04 18:28:03.366675 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #22 seg 4/9 ore.G8AW4BQ7RV","$os":"iOS","$screen_width":390,"$app_version":"5.0.02","country":"US","sn":"3949E7BDE52DB6F4","is_secret":false,"$is_first_day":true,"$model":"
+2026-09-04 18:28:03.366711 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #22 seg 5/9 iPhone18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","requirement_id":1,"$network_type":"WIFI","firmwar
+2026-09-04 18:28:03.366730 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #22 seg 6/9 e_version":"14.43","$app_name":"soundcore","device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$timezone_offset":420,"$wifi":true,"mac":"F4:B6:2D:E5:BD:E7","app
+2026-09-04 18:28:03.366743 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #22 seg 7/9 _line":"SoundCore","$referrer_title":"P20i","$screen_height":844,"track_sign":"aSC_HOME_DEVICE.b3.d4.RESULT.SC_HOME_DEVICE_RESULT","$lib_method":"code","$lib_ve
+2026-09-04 18:28:03.366791 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #22 seg 8/9 rsion":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","is_success":true},"distinct_id":"25175005-856F-4AAB-A276-0198
+2026-09-04 18:28:03.366810 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #22 seg 9/9 8F6459F5","type":"track"}
+2026-09-04 18:28:03.366825 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #22 END
+2026-09-04 18:28:03.366944 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 1305 -> 1305 bytes
+2026-09-04 18:28:03.366963 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #23 src=json-mod url=(none) len=1305 score=2 BEGIN
+2026-09-04 18:28:03.366973 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #23 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":2675153831,"event":"SC_HOME_DEVICE_RESULT","time":1788571683361,"identities":{"$identity_idfv
+2026-09-04 18:28:03.367047 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #23 seg 2/9 ":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F
+2026-09-04 18:28:03.367147 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #23 seg 3/9 -4AAB-A276-01988F6459F5"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$app_id":"com.oceanwing.SoundC
+2026-09-04 18:28:03.367186 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #23 seg 4/9 ore.G8AW4BQ7RV","$os":"iOS","$screen_width":390,"$app_version":"5.0.02","country":"US","sn":"3949000000000000","is_secret":false,"$is_first_day":true,"$model":"
+2026-09-04 18:28:03.367215 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #23 seg 5/9 iPhone18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","requirement_id":1,"$network_type":"WIFI","firmwar
+2026-09-04 18:28:03.367222 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #23 seg 6/9 e_version":"14.42","$app_name":"soundcore","device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$timezone_offset":420,"$wifi":true,"mac":"F4:B6:2D:E5:BD:E7","app
+2026-09-04 18:28:03.367230 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #23 seg 7/9 _line":"SoundCore","$referrer_title":"P20i","$screen_height":844,"track_sign":"aSC_HOME_DEVICE.b3.d4.RESULT.SC_HOME_DEVICE_RESULT","$lib_method":"code","$lib_ve
+2026-09-04 18:28:03.367241 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #23 seg 8/9 rsion":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","is_success":true},"distinct_id":"25175005-856F-4AAB-A276-0198
+2026-09-04 18:28:03.367329 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #23 seg 9/9 8F6459F5","type":"track"}
+2026-09-04 18:28:03.367345 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #23 END
+2026-09-04 18:28:03.381164 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 130 -> 130 bytes
+2026-09-04 18:28:03.381201 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #24 src=json-mod url=(none) len=130 score=1 BEGIN
+2026-09-04 18:28:03.381301 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #24 seg 1/1 {"device_infos":[{"product_code":"A3949","device_sn":"3949000000000000","firmware_version":"14.42"}],"feature_codes":["ai_recap"]}
+2026-09-04 18:28:03.381451 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #24 END
+2026-09-04 18:28:03.382416 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 130 -> 130 bytes
+2026-09-04 18:28:03.470095 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #25 src=json url=(none) len=551 score=2 BEGIN
+2026-09-04 18:28:03.470114 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #25 seg 1/4 {"events":[{"value_string":"0000000003030000000000000000000000000d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+2026-09-04 18:28:03.470129 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #25 seg 2/4 6e","module":"COMMON","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949E7BDE52DB6F4","type":"1","name":"DEV_USE_INF
+2026-09-04 18:28:03.470139 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #25 seg 3/4 O"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id"
+2026-09-04 18:28:03.470149 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #25 seg 4/4 :"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.470161 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #25 END
+2026-09-04 18:28:03.470172 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 551 -> 551 bytes
+2026-09-04 18:28:03.470201 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #26 src=json-mod url=(none) len=551 score=2 BEGIN
+2026-09-04 18:28:03.470213 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #26 seg 1/4 {"events":[{"value_string":"0000000003030000000000000000000000000d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+2026-09-04 18:28:03.470224 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #26 seg 2/4 6e","module":"COMMON","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949000000000000","type":"1","name":"DEV_USE_INF
+2026-09-04 18:28:03.470238 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #26 seg 3/4 O"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id"
+2026-09-04 18:28:03.470247 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #26 seg 4/4 :"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.470256 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #26 END
+2026-09-04 18:28:03.475021 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #27 src=resp url=(none) len=129 score=5 BEGIN
+2026-09-04 18:28:03.475039 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #27 seg 1/1 {"firmware_list":[{"product_component":"ALL","version":"14.43","relation_sn":"","product_code":"A3949","sn":"3949E7BDE52DB6F4"}]}
+2026-09-04 18:28:03.475048 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #27 END
+2026-09-04 18:28:03.475100 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR Openudid: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.475112 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR X-App-Key: soundcore
+2026-09-04 18:28:03.475124 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR timezone: America/Los_Angeles
+2026-09-04 18:28:03.475134 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR sys_version: 26.5.1
+2026-09-04 18:28:03.475148 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR X-Request-Ts: 1788571683
+2026-09-04 18:28:03.475160 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR Gtoken: d4ffabf96f02f8d4097a4b5a1927386f
+2026-09-04 18:28:03.475169 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR unique-sign: 122edb796e8dcad002ca984aff3a4919
+2026-09-04 18:28:03.475179 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR phone_virtual_id: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.475188 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR terminal-id: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.475197 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR AnkerBG: SPEAKER
+2026-09-04 18:28:03.475205 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR token: 027074cb8d9eccae848b312067df9e54
+2026-09-04 18:28:03.475216 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR User-Agent: Soundcore-iOS-5.0.02
+2026-09-04 18:28:03.475225 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR X-Request-Once: B49425E3-779F-44C7-BD73-DBD6C62E6236
+2026-09-04 18:28:03.475233 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR country: US
+2026-09-04 18:28:03.475241 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR language: en
+2026-09-04 18:28:03.475252 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #28 src=json url=(none) len=129 score=5 BEGIN
+2026-09-04 18:28:03.475262 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #28 seg 1/1 {"firmware_list":[{"product_code":"A3949","relation_sn":"","sn":"3949E7BDE52DB6F4","product_component":"ALL","version":"14.43"}]}
+2026-09-04 18:28:03.475273 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #28 END
+2026-09-04 18:28:03.475283 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 129 -> 129 bytes
+2026-09-04 18:28:03.475292 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #29 src=json-mod url=(none) len=129 score=5 BEGIN
+2026-09-04 18:28:03.475301 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #29 seg 1/1 {"firmware_list":[{"product_code":"A3949","relation_sn":"","sn":"3949000000000000","product_component":"ALL","version":"14.42"}]}
+2026-09-04 18:28:03.475310 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #29 END
+2026-09-04 18:28:03.475319 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR Content-Type: application/json
+2026-09-04 18:28:03.475329 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP Content-Type: application/json
+2026-09-04 18:28:03.475340 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP Gtoken: d4ffabf96f02f8d4097a4b5a1927386f
+2026-09-04 18:28:03.475350 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP X-Request-Ts: 1788571683
+2026-09-04 18:28:03.475364 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP sys_version: 26.5.1
+2026-09-04 18:28:03.475376 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP Openudid: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.475386 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP X-Request-Once: B49425E3-779F-44C7-BD73-DBD6C62E6236
+2026-09-04 18:28:03.475396 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP unique-sign: 122edb796e8dcad002ca984aff3a4919
+2026-09-04 18:28:03.475404 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP token: 027074cb8d9eccae848b312067df9e54
+2026-09-04 18:28:03.475412 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP language: en
+2026-09-04 18:28:03.475422 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP terminal-id: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.475430 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP User-Agent: Soundcore-iOS-5.0.02
+2026-09-04 18:28:03.475438 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP timezone: America/Los_Angeles
+2026-09-04 18:28:03.475446 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP phone_virtual_id: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.475456 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP AnkerBG: SPEAKER
+2026-09-04 18:28:03.475464 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP X-App-Key: soundcore
+2026-09-04 18:28:03.475472 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP country: US
+2026-09-04 18:28:03.475527 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 129 -> 129 bytes
+2026-09-04 18:28:03.475881 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #30 src=httpBody url=https://speaker.eufylife.com/api/v2/speaker/firmware/upgrade_check/batch len=196 score=0 BEGIN
+2026-09-04 18:28:03.475900 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #30 seg 1/2 MTc4ODU3MTY4MzQ3NTY1OQd0uEkoD1xffSb9i42cyviKDoYV4r8uOqtYD3lBuyoFzd6FKGgNhpzlxZ4SwVzgT+pqQ3+eKAgD1Nyx39d2OegdyYdYzyG1nYpdg0ZweLhib9BM84b7SofJSMk8CRTpF7XRSQeSHRt3
+2026-09-04 18:28:03.475915 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #30 seg 2/2 GUSqynwb3Qc3sZvBbmgCBWZZLn1EXs8LBQ==
+2026-09-04 18:28:03.475925 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #30 END
+2026-09-04 18:28:03.475935 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP Content-Type: application/json
+2026-09-04 18:28:03.475945 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP Gtoken: d4ffabf96f02f8d4097a4b5a1927386f
+2026-09-04 18:28:03.475955 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP X-Request-Ts: 1788571683
+2026-09-04 18:28:03.475964 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP sys_version: 26.5.1
+2026-09-04 18:28:03.475977 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP Openudid: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.475985 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP X-Request-Once: B49425E3-779F-44C7-BD73-DBD6C62E6236
+2026-09-04 18:28:03.475994 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP unique-sign: 122edb796e8dcad002ca984aff3a4919
+2026-09-04 18:28:03.476002 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP token: 027074cb8d9eccae848b312067df9e54
+2026-09-04 18:28:03.476013 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP language: en
+2026-09-04 18:28:03.476021 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP terminal-id: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.476029 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP User-Agent: Soundcore-iOS-5.0.02
+2026-09-04 18:28:03.476038 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP timezone: America/Los_Angeles
+2026-09-04 18:28:03.476047 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP phone_virtual_id: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.476057 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP AnkerBG: SPEAKER
+2026-09-04 18:28:03.476066 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP X-App-Key: soundcore
+2026-09-04 18:28:03.476076 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP country: US
+2026-09-04 18:28:03.476207 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP Content-Type: application/json
+2026-09-04 18:28:03.476221 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP Gtoken: d4ffabf96f02f8d4097a4b5a1927386f
+2026-09-04 18:28:03.476231 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP X-Request-Ts: 1788571683
+2026-09-04 18:28:03.476240 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP sys_version: 26.5.1
+2026-09-04 18:28:03.476256 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP Openudid: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.476267 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP X-Request-Once: B49425E3-779F-44C7-BD73-DBD6C62E6236
+2026-09-04 18:28:03.476276 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP unique-sign: 122edb796e8dcad002ca984aff3a4919
+2026-09-04 18:28:03.476284 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP token: 027074cb8d9eccae848b312067df9e54
+2026-09-04 18:28:03.476292 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP language: en
+2026-09-04 18:28:03.476331 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP terminal-id: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.476341 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP User-Agent: Soundcore-iOS-5.0.02
+2026-09-04 18:28:03.476349 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP timezone: America/Los_Angeles
+2026-09-04 18:28:03.476357 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP phone_virtual_id: 1BCD1762-E670-4625-93C5-BD4607822125
+2026-09-04 18:28:03.476365 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP AnkerBG: SPEAKER
+2026-09-04 18:28:03.476373 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP X-App-Key: soundcore
+2026-09-04 18:28:03.476383 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDRSNAP country: US
+2026-09-04 18:28:03.476394 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY HDR Transfer-Encoding:
+2026-09-04 18:28:03.478986 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #31 src=json url=(none) len=646 score=2 BEGIN
+2026-09-04 18:28:03.479021 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #31 seg 1/5 {"events":[{"value_string":"{\"res_code\":1,\"content\":{\"num\":0,\"state\":\"\",\"delay\":0},\"product_code\":\"\",\"id\":0,\"open_browser\":0,\"message\":\"S
+2026-09-04 18:28:03.479030 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #31 seg 2/5 UCCESS\",\"is_need\":false,\"type\":\"\",\"url\":{\"web\":\"\",\"app\":\"\",\"share\":\"\"}}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:
+2026-09-04 18:28:03.479045 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #31 seg 3/5 E5:BD:E7","product_code":"A3949","sn":"3949E7BDE52DB6F4","type":"1","name":"APP_POP_REQUEST_FAIL"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore
+2026-09-04 18:28:03.479053 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #31 seg 4/5 -iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"A
+2026-09-04 18:28:03.479061 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #31 seg 5/5 pple"}
+2026-09-04 18:28:03.479076 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #31 END
+2026-09-04 18:28:03.479122 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 646 -> 646 bytes
+2026-09-04 18:28:03.479133 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #32 src=json-mod url=(none) len=646 score=2 BEGIN
+2026-09-04 18:28:03.479143 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #32 seg 1/5 {"events":[{"value_string":"{\"res_code\":1,\"content\":{\"num\":0,\"state\":\"\",\"delay\":0},\"product_code\":\"\",\"id\":0,\"open_browser\":0,\"message\":\"S
+2026-09-04 18:28:03.479156 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #32 seg 2/5 UCCESS\",\"is_need\":false,\"type\":\"\",\"url\":{\"web\":\"\",\"app\":\"\",\"share\":\"\"}}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:
+2026-09-04 18:28:03.479164 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #32 seg 3/5 E5:BD:E7","product_code":"A3949","sn":"3949000000000000","type":"1","name":"APP_POP_REQUEST_FAIL"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore
+2026-09-04 18:28:03.479172 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #32 seg 4/5 -iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"A
+2026-09-04 18:28:03.479181 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #32 seg 5/5 pple"}
+2026-09-04 18:28:03.479200 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #32 END
+2026-09-04 18:28:03.575378 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #33 src=resp url=(none) len=91 score=2 BEGIN
+2026-09-04 18:28:03.575401 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #33 seg 1/1 {"res_code":1,"message":"SUCCESS","upgrade_list":[{"needUpdate":false,"lastPackage":null}]}
+2026-09-04 18:28:03.575407 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #33 END
+2026-09-04 18:28:03.575438 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #34 src=json url=(none) len=133 score=2 BEGIN
+2026-09-04 18:28:03.575449 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #34 seg 1/1 {"message":"SUCCESS","res_code":1,"data":{"message":"SUCCESS","res_code":1,"upgrade_list":[{"needUpdate":false,"lastPackage":null}]}}
+2026-09-04 18:28:03.575460 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #34 END
+2026-09-04 18:28:03.579575 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #35 src=json url=(none) len=435 score=2 BEGIN
+2026-09-04 18:28:03.579611 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #35 seg 1/3 {"events":[{"value_string":"{\"type\":\"all\"}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949E7B
+2026-09-04 18:28:03.579632 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #35 seg 2/3 DE52DB6F4","type":"1","name":"APP_POP_REQUEST"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BC
+2026-09-04 18:28:03.579640 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #35 seg 3/3 D1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.579649 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #35 END
+2026-09-04 18:28:03.579660 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 435 -> 435 bytes
+2026-09-04 18:28:03.579667 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #36 src=json-mod url=(none) len=435 score=2 BEGIN
+2026-09-04 18:28:03.579678 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #36 seg 1/3 {"events":[{"value_string":"{\"type\":\"all\"}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949000
+2026-09-04 18:28:03.579685 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #36 seg 2/3 000000000","type":"1","name":"APP_POP_REQUEST"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BC
+2026-09-04 18:28:03.579694 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #36 seg 3/3 D1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.579702 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #36 END
+2026-09-04 18:28:03.753992 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #37 src=json url=(none) len=2170 score=2 BEGIN
+2026-09-04 18:28:03.754166 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 1/14 {"events":[{"value_string":"{\"res_code\":1,\"content\":{\"num\":1,\"state\":\"3051163_init\",\"delay\":0,\"pop_ups\":[{\"floating_window\":{},\"state\":\"30511
+2026-09-04 18:28:03.754490 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 2/14 63_init\",\"title\":\"\",\"content\":\"\",\"img\":{\"type\":\"\",\"is_zoom\":false,\"width\":912,\"url\":\"https:\\\/\\\/d2htfo7ft368vg.cloudfront.net\\\/pop_up
+2026-09-04 18:28:03.754997 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 3/14 \\\/prod\\\/1788252317165203_20260901-160348.png\",\"height\":1170}}]},\"product_code\":\"A3004,A3004311,A3004C,A3005,A3012,A3025,A3027,A3028,A3028CC,A3029,A302
+2026-09-04 18:28:03.755296 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 4/14 9XR,A3030,A3033,A3033EU,A3035,A3035CS,A3040,A3045,A3045ZA1,A3062,A3116,A3117,A3118,A3119,A3123,A3125,A3126,A3127,A3129,A3130,A3131,A3133,A3134,A3134Z11,A3135,A3
+2026-09-04 18:28:03.755577 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 5/14 136,A3138,A3138J11,A3145,A3148,A3161,A3162,A3163,A3165,A3166,A3167,A3171,A3172,A31A3,A31A3012,A31X1,A3201,A3300,A3301,A3302,A3330,A3331,A3372,A3388,A3388P42,A33
+2026-09-04 18:28:03.755695 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 6/14 90,A3390E,A3390J,A3391,A3391E,A3392,A3393,A3395,A3396,A3399,A33A0,A33A1,A33A1J11,A3561,A3600,A3850,A3850Dongle,A3871,A3872,A3873,A3874,A3874X,A3875,A3876,A3878,
+2026-09-04 18:28:03.755727 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 7/14 A3909,A3910,A3913,A3926,A3926Z11,A3927,A3927EU,A3930,A3931,A3931XR,A3933,A3935,A3935W,A3936,A3937,A3939,A3939WEU,A3943,A3944,A3944EU,A3945,A3947,A3948,A3948A25,
+2026-09-04 18:28:03.755826 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 8/14 A3949,A3949P25,A3949R50,A3951,A3952,A3953,A3954,A3955,A3957,A3958,A3959,A3959R50,A3961,A3968,A3969,A3982,A3982EU,A3983,A3983EU,A3992,A3992EU,A3993,A3993EU,A3994
+2026-09-04 18:28:03.755853 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 9/14 ,D1101,D1105,D1200,D1202,D1202C,D1203,D1204,D1204-Box,D1205,D1206,D1402,D1404,D1406,D3200,D5100,D5103,Z2010,Z5180,Z6010 ,Z6110,Z6111\",\"id\":3051163,\"open_bro
+2026-09-04 18:28:03.755872 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 10/14 wser\":1,\"message\":\"SUCCESS\",\"is_need\":true,\"type\":\"img\",\"url\":{\"web\":\"https:\\\/\\\/service.soundcore.com\\\/article-description\\\/How-to-Regis
+2026-09-04 18:28:03.755902 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 11/14 ter-Your-E-Warranty-Card-in-the-Soundcore-App?device_sn=3949E7BDE52DB6F4&ref=search&terminal_id=1BCD1762-E670-4625-93C5-BD4607822125&user_id=\",\"app\":\"\",\"s
+2026-09-04 18:28:03.755913 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 12/14 hare\":\"\"}}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949E7BDE52DB6F4","type":"1","name":"APP
+2026-09-04 18:28:03.755924 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 13/14 _POP_REQUEST_SUCCESS"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD46
+2026-09-04 18:28:03.756045 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #37 seg 14/14 07822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.756129 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #37 END
+2026-09-04 18:28:03.756155 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 2170 -> 2170 bytes
+2026-09-04 18:28:03.756168 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #38 src=json-mod url=(none) len=2170 score=2 BEGIN
+2026-09-04 18:28:03.756180 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 1/14 {"events":[{"value_string":"{\"res_code\":1,\"content\":{\"num\":1,\"state\":\"3051163_init\",\"delay\":0,\"pop_ups\":[{\"floating_window\":{},\"state\":\"30511
+2026-09-04 18:28:03.756191 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 2/14 63_init\",\"title\":\"\",\"content\":\"\",\"img\":{\"type\":\"\",\"is_zoom\":false,\"width\":912,\"url\":\"https:\\\/\\\/d2htfo7ft368vg.cloudfront.net\\\/pop_up
+2026-09-04 18:28:03.756226 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 3/14 \\\/prod\\\/1788252317165203_20260901-160348.png\",\"height\":1170}}]},\"product_code\":\"A3004,A3004311,A3004C,A3005,A3012,A3025,A3027,A3028,A3028CC,A3029,A302
+2026-09-04 18:28:03.756274 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 4/14 9XR,A3030,A3033,A3033EU,A3035,A3035CS,A3040,A3045,A3045ZA1,A3062,A3116,A3117,A3118,A3119,A3123,A3125,A3126,A3127,A3129,A3130,A3131,A3133,A3134,A3134Z11,A3135,A3
+2026-09-04 18:28:03.756285 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 5/14 136,A3138,A3138J11,A3145,A3148,A3161,A3162,A3163,A3165,A3166,A3167,A3171,A3172,A31A3,A31A3012,A31X1,A3201,A3300,A3301,A3302,A3330,A3331,A3372,A3388,A3388P42,A33
+2026-09-04 18:28:03.756295 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 6/14 90,A3390E,A3390J,A3391,A3391E,A3392,A3393,A3395,A3396,A3399,A33A0,A33A1,A33A1J11,A3561,A3600,A3850,A3850Dongle,A3871,A3872,A3873,A3874,A3874X,A3875,A3876,A3878,
+2026-09-04 18:28:03.756305 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 7/14 A3909,A3910,A3913,A3926,A3926Z11,A3927,A3927EU,A3930,A3931,A3931XR,A3933,A3935,A3935W,A3936,A3937,A3939,A3939WEU,A3943,A3944,A3944EU,A3945,A3947,A3948,A3948A25,
+2026-09-04 18:28:03.756315 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 8/14 A3949,A3949P25,A3949R50,A3951,A3952,A3953,A3954,A3955,A3957,A3958,A3959,A3959R50,A3961,A3968,A3969,A3982,A3982EU,A3983,A3983EU,A3992,A3992EU,A3993,A3993EU,A3994
+2026-09-04 18:28:03.756325 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 9/14 ,D1101,D1105,D1200,D1202,D1202C,D1203,D1204,D1204-Box,D1205,D1206,D1402,D1404,D1406,D3200,D5100,D5103,Z2010,Z5180,Z6010 ,Z6110,Z6111\",\"id\":3051163,\"open_bro
+2026-09-04 18:28:03.756335 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 10/14 wser\":1,\"message\":\"SUCCESS\",\"is_need\":true,\"type\":\"img\",\"url\":{\"web\":\"https:\\\/\\\/service.soundcore.com\\\/article-description\\\/How-to-Regis
+2026-09-04 18:28:03.756345 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 11/14 ter-Your-E-Warranty-Card-in-the-Soundcore-App?device_sn=3949E7BDE52DB6F4&ref=search&terminal_id=1BCD1762-E670-4625-93C5-BD4607822125&user_id=\",\"app\":\"\",\"s
+2026-09-04 18:28:03.756355 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 12/14 hare\":\"\"}}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949000000000000","type":"1","name":"APP
+2026-09-04 18:28:03.756365 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 13/14 _POP_REQUEST_SUCCESS"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD46
+2026-09-04 18:28:03.756377 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #38 seg 14/14 07822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.756386 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #38 END
+2026-09-04 18:28:03.758584 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #39 src=json url=(none) len=1334 score=2 BEGIN
+2026-09-04 18:28:03.758613 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #39 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":2380512252,"event":"SC_MARKETING_EXPOSURE","time":1788571683755,"identities":{"$identity_idfv
+2026-09-04 18:28:03.758624 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #39 seg 2/9 ":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F
+2026-09-04 18:28:03.758633 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #39 seg 3/9 -4AAB-A276-01988F6459F5"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$screen_width":390
+2026-09-04 18:28:03.759057 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #39 seg 4/9 ,"button_name":"pop_up","$app_version":"5.0.02","task_id":3051163,"country":"US","is_secret":false,"sn":"3949E7BDE52DB6F4","$is_first_day":true,"$model":"iPhone
+2026-09-04 18:28:03.759105 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #39 seg 5/9 18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","requirement_id":194,"$network_type":"WIFI","firmware_ve
+2026-09-04 18:28:03.759235 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #39 seg 6/9 rsion":"14.43","$app_name":"soundcore","$wifi":true,"device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$timezone_offset":420,"mac":"F4:B6:2D:E5:BD:E7","app_lin
+2026-09-04 18:28:03.759254 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #39 seg 7/9 e":"SoundCore","$referrer_title":"P20i","$screen_height":844,"track_sign":"aSC_MARKETING.b483.d485.EXPOSURE.SC_MARKETING_EXPOSURE","$lib_method":"code","$lib_ve
+2026-09-04 18:28:03.759285 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #39 seg 8/9 rsion":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},"distinct_id":
+2026-09-04 18:28:03.759297 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #39 seg 9/9 "25175005-856F-4AAB-A276-01988F6459F5","type":"track"}
+2026-09-04 18:28:03.759357 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #39 END
+2026-09-04 18:28:03.759415 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 1334 -> 1334 bytes
+2026-09-04 18:28:03.759476 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #40 src=json-mod url=(none) len=1334 score=2 BEGIN
+2026-09-04 18:28:03.759501 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #40 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":2380512252,"event":"SC_MARKETING_EXPOSURE","time":1788571683755,"identities":{"$identity_idfv
+2026-09-04 18:28:03.759572 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #40 seg 2/9 ":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F
+2026-09-04 18:28:03.759586 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #40 seg 3/9 -4AAB-A276-01988F6459F5"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$screen_width":390
+2026-09-04 18:28:03.759620 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #40 seg 4/9 ,"button_name":"pop_up","$app_version":"5.0.02","task_id":3051163,"country":"US","is_secret":false,"sn":"3949000000000000","$is_first_day":true,"$model":"iPhone
+2026-09-04 18:28:03.759639 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #40 seg 5/9 18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","requirement_id":194,"$network_type":"WIFI","firmware_ve
+2026-09-04 18:28:03.759649 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #40 seg 6/9 rsion":"14.42","$app_name":"soundcore","$wifi":true,"device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$timezone_offset":420,"mac":"F4:B6:2D:E5:BD:E7","app_lin
+2026-09-04 18:28:03.759666 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #40 seg 7/9 e":"SoundCore","$referrer_title":"P20i","$screen_height":844,"track_sign":"aSC_MARKETING.b483.d485.EXPOSURE.SC_MARKETING_EXPOSURE","$lib_method":"code","$lib_ve
+2026-09-04 18:28:03.759676 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #40 seg 8/9 rsion":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},"distinct_id":
+2026-09-04 18:28:03.759743 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #40 seg 9/9 "25175005-856F-4AAB-A276-01988F6459F5","type":"track"}
+2026-09-04 18:28:03.759754 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #40 END
+2026-09-04 18:28:03.903483 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #41 src=json url=(none) len=457 score=2 BEGIN
+2026-09-04 18:28:03.903533 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #41 seg 1/3 {"events":[{"value_string":"{\"type\":\"img\",\"id\":\"3051163\"}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A
+2026-09-04 18:28:03.903594 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #41 seg 2/3 3949","sn":"3949E7BDE52DB6F4","type":"1","name":"APP_POP_UP_SUCCESS"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"i
+2026-09-04 18:28:03.903687 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #41 seg 3/3 Phone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.903711 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #41 END
+2026-09-04 18:28:03.903722 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 457 -> 457 bytes
+2026-09-04 18:28:03.903733 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #42 src=json-mod url=(none) len=457 score=2 BEGIN
+2026-09-04 18:28:03.903763 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #42 seg 1/3 {"events":[{"value_string":"{\"type\":\"img\",\"id\":\"3051163\"}","module":"POP","time":"1788571683","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A
+2026-09-04 18:28:03.903774 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #42 seg 2/3 3949","sn":"3949000000000000","type":"1","name":"APP_POP_UP_SUCCESS"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"i
+2026-09-04 18:28:03.903785 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #42 seg 3/3 Phone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:03.903816 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #42 END
+2026-09-04 18:28:05.831915 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #43 src=json url=(none) len=1224 score=2 BEGIN
+2026-09-04 18:28:05.831930 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #43 seg 1/8 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":4050954876,"event":"$BindID","time":1788571683358,"identities":{"$identity_idfv":"4C63CC30-EF
+2026-09-04 18:28:05.831942 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #43 seg 2/8 C0-4192-B13A-5A331BF2E232","$identity_anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7B
+2026-09-04 18:28:05.831949 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #43 seg 3/8 DE52DB6F4"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$screen_width":390,"$app_version
+2026-09-04 18:28:05.831956 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #43 seg 4/8 ":"5.0.02","country":"US","sn":"3949000000000000","is_secret":false,"$is_first_day":true,"$model":"iPhone18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E23
+2026-09-04 18:28:05.831963 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #43 seg 5/8 2","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$network_type":"WIFI","firmware_version":"14.42","device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$app_name
+2026-09-04 18:28:05.831970 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #43 seg 6/8 ":"soundcore","$wifi":true,"$timezone_offset":420,"mac":"F4:B6:2D:E5:BD:E7","app_line":"SoundCore","$referrer_title":"P20i","$screen_height":844,"$lib_method":"
+2026-09-04 18:28:05.831978 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #43 seg 7/8 code","$lib_version":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},
+2026-09-04 18:28:05.831985 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #43 seg 8/8 "distinct_id":"25175005-856F-4AAB-A276-01988F6459F5","type":"track_id_bind","_flush_time":1788571685831}
+2026-09-04 18:28:05.831994 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #43 END
+2026-09-04 18:28:05.832203 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #44 src=json url=(none) len=1333 score=2 BEGIN
+2026-09-04 18:28:05.832228 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #44 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":2675153831,"event":"SC_HOME_DEVICE_RESULT","time":1788571683361,"identities":{"$identity_idfv
+2026-09-04 18:28:05.832241 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #44 seg 2/9 ":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","$identity_anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C
+2026-09-04 18:28:05.832249 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #44 seg 3/9 04591||3949E7BDE52DB6F4"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$app_id":"com.ocea
+2026-09-04 18:28:05.832256 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #44 seg 4/9 nwing.SoundCore.G8AW4BQ7RV","$screen_width":390,"$app_version":"5.0.02","country":"US","sn":"3949000000000000","is_secret":false,"$is_first_day":true,"$model":"
+2026-09-04 18:28:05.832263 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #44 seg 5/9 iPhone18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","requirement_id":1,"$network_type":"WIFI","firmwar
+2026-09-04 18:28:05.832270 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #44 seg 6/9 e_version":"14.42","$app_name":"soundcore","$wifi":true,"device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$timezone_offset":420,"mac":"F4:B6:2D:E5:BD:E7","app
+2026-09-04 18:28:05.832277 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #44 seg 7/9 _line":"SoundCore","$referrer_title":"P20i","$screen_height":844,"track_sign":"aSC_HOME_DEVICE.b3.d4.RESULT.SC_HOME_DEVICE_RESULT","$lib_method":"code","$lib_ve
+2026-09-04 18:28:05.832284 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #44 seg 8/9 rsion":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","is_success":true},"distinct_id":"25175005-856F-4AAB-A276-0198
+2026-09-04 18:28:05.832293 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #44 seg 9/9 8F6459F5","type":"track","_flush_time":1788571685832}
+2026-09-04 18:28:05.832300 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #44 END
+2026-09-04 18:28:05.832340 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #45 src=json url=(none) len=1362 score=2 BEGIN
+2026-09-04 18:28:05.832349 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #45 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":2380512252,"event":"SC_MARKETING_EXPOSURE","time":1788571683755,"identities":{"$identity_idfv
+2026-09-04 18:28:05.832358 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #45 seg 2/9 ":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","$identity_anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C
+2026-09-04 18:28:05.832366 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #45 seg 3/9 04591||3949E7BDE52DB6F4"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$screen_width":390
+2026-09-04 18:28:05.832373 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #45 seg 4/9 ,"button_name":"pop_up","$app_version":"5.0.02","task_id":3051163,"country":"US","is_secret":false,"sn":"3949000000000000","$is_first_day":true,"$model":"iPhone
+2026-09-04 18:28:05.832380 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #45 seg 5/9 18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","requirement_id":194,"$timezone_offset":420,"$network_ty
+2026-09-04 18:28:05.832387 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #45 seg 6/9 pe":"WIFI","firmware_version":"14.42","$app_name":"soundcore","$wifi":true,"device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","mac":"F4:B6:2D:E5:BD:E7","app_lin
+2026-09-04 18:28:05.832394 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #45 seg 7/9 e":"SoundCore","$referrer_title":"P20i","$screen_height":844,"track_sign":"aSC_MARKETING.b483.d485.EXPOSURE.SC_MARKETING_EXPOSURE","$lib_method":"code","$lib_ve
+2026-09-04 18:28:05.832400 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #45 seg 8/9 rsion":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},"distinct_id":
+2026-09-04 18:28:05.832407 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #45 seg 9/9 "25175005-856F-4AAB-A276-01988F6459F5","type":"track","_flush_time":1788571685832}
+2026-09-04 18:28:05.832414 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #45 END
+2026-09-04 18:28:05.838030 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #46 src=json url=(none) len=1819 score=2 BEGIN
+2026-09-04 18:28:05.838080 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 1/12 {"events":[{"value_string":"","module":"APP_FIRM","product_code":"none","mac":"","time":"1788571658","device_id":"","sn":"","type":"1","name":"APP_FIRM_NON_APPS
+2026-09-04 18:28:05.838104 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 2/12 TORE_DOWNLOAD"},{"value_string":"","module":"APP_FIRM","product_code":"none","mac":"","time":"1788571658","device_id":"","sn":"","type":"1","name":"APP_FIRM_SIG
+2026-09-04 18:28:05.838111 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 3/12 NATURE_TAMPER"},{"value_string":"","module":"APP_FIRM","product_code":"none","mac":"","time":"1788571658","device_id":"","sn":"","type":"1","name":"JMDetectionR
+2026-09-04 18:28:05.838122 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 4/12 esultJailBreak"},{"value_string":"","module":"USERCENTER","product_code":"none","device_id":"","time":"1788571663","mac":"","sn":"","type":"0","name":"APP_UNCON
+2026-09-04 18:28:05.838131 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 5/12 _DEVICE_LOGIN_SKIP"},{"value_string":"","module":"USERCENTER","product_code":"none","mac":"","time":"1788571664","device_id":"","sn":"","type":"1","name":"APP_U
+2026-09-04 18:28:05.838138 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 6/12 SER_RESEARCH_IMPRESSION"},{"value_string":"{\"num\":\"1\",\"code\":\"A3949\",\"new_pn\":\"\"}","module":"RECOMMENDED_DEVICE","product_code":"none","mac":"","tim
+2026-09-04 18:28:05.838144 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 7/12 e":"1788571676","device_id":"","sn":"","type":"1","name":"RECOMMENDED_NEW_DEVICE_CONNECTION"},{"value_string":"A3949","module":"RECOMMENDED_DEVICE","product_cod
+2026-09-04 18:28:05.838152 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 8/12 e":"A3949","mac":"","time":"1788571682","device_id":"","sn":"","type":"0","name":"NEW_DEVICE_CONNECTION_CLICK_GO"},{"value_string":"00010303000031342e343331342e
+2026-09-04 18:28:05.838161 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 9/12 343333393439453742444535324442364634000078787878787878780000000000000000000000000e016601660132013301210120ffffff610001ffffffffffffffffffffffffffffffbb","module"
+2026-09-04 18:28:05.838172 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 10/12 :"HOME_PAGE","product_code":"A3949","mac":"F4:B6:2D:E5:BD:E7","time":"1788571683","device_id":"","sn":"","type":"1","name":"DEV_DATA_COMMAND_ALL_INFO"}],"countr
+2026-09-04 18:28:05.838183 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 11/12 y":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id":"","phone_n
+2026-09-04 18:28:05.838191 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #46 seg 12/12 ame":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:05.838198 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #46 END
+2026-09-04 18:28:06.008251 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #47 src=json url=(none) len=3504 score=2 BEGIN
+2026-09-04 18:28:06.008269 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 1/22 {"events":[{"value_string":"{\"type\":\"nps\"}","module":"POP","product_code":"A3949","device_id":"","time":"1788571683","mac":"F4:B6:2D:E5:BD:E7","sn":"3949000
+2026-09-04 18:28:06.008283 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 2/22 000000000","type":"1","name":"APP_POP_REQUEST"},{"value_string":"0000000003030000000000000000000000000d000000000000000000000000000000000000000000000000000000000
+2026-09-04 18:28:06.008290 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 3/22 00000000000000000000000000000000000006e","module":"COMMON","product_code":"A3949","device_id":"","time":"1788571683","mac":"F4:B6:2D:E5:BD:E7","sn":"39490000000
+2026-09-04 18:28:06.008303 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 4/22 00000","type":"1","name":"DEV_USE_INFO"},{"value_string":"{\"res_code\":1,\"content\":{\"num\":0,\"state\":\"\",\"delay\":0},\"product_code\":\"\",\"id\":0,\"op
+2026-09-04 18:28:06.008311 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 5/22 en_browser\":0,\"message\":\"SUCCESS\",\"is_need\":false,\"type\":\"\",\"url\":{\"web\":\"\",\"app\":\"\",\"share\":\"\"}}","module":"POP","product_code":"A3949
+2026-09-04 18:28:06.008318 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 6/22 ","device_id":"","time":"1788571683","mac":"F4:B6:2D:E5:BD:E7","sn":"3949000000000000","type":"1","name":"APP_POP_REQUEST_FAIL"},{"value_string":"{\"type\":\"al
+2026-09-04 18:28:06.008329 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 7/22 l\"}","module":"POP","product_code":"A3949","device_id":"","time":"1788571683","mac":"F4:B6:2D:E5:BD:E7","sn":"3949000000000000","type":"1","name":"APP_POP_REQU
+2026-09-04 18:28:06.008338 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 8/22 EST"},{"value_string":"{\"res_code\":1,\"content\":{\"num\":1,\"state\":\"3051163_init\",\"delay\":0,\"pop_ups\":[{\"floating_window\":{},\"state\":\"3051163_in
+2026-09-04 18:28:06.008345 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 9/22 it\",\"title\":\"\",\"content\":\"\",\"img\":{\"type\":\"\",\"is_zoom\":false,\"width\":912,\"url\":\"https:\\\/\\\/d2htfo7ft368vg.cloudfront.net\\\/pop_up\\\/p
+2026-09-04 18:28:06.008352 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 10/22 rod\\\/1788252317165203_20260901-160348.png\",\"height\":1170}}]},\"product_code\":\"A3004,A3004311,A3004C,A3005,A3012,A3025,A3027,A3028,A3028CC,A3029,A3029XR,A
+2026-09-04 18:28:06.008359 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 11/22 3030,A3033,A3033EU,A3035,A3035CS,A3040,A3045,A3045ZA1,A3062,A3116,A3117,A3118,A3119,A3123,A3125,A3126,A3127,A3129,A3130,A3131,A3133,A3134,A3134Z11,A3135,A3136,A
+2026-09-04 18:28:06.008367 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 12/22 3138,A3138J11,A3145,A3148,A3161,A3162,A3163,A3165,A3166,A3167,A3171,A3172,A31A3,A31A3012,A31X1,A3201,A3300,A3301,A3302,A3330,A3331,A3372,A3388,A3388P42,A3390,A3
+2026-09-04 18:28:06.008374 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 13/22 390E,A3390J,A3391,A3391E,A3392,A3393,A3395,A3396,A3399,A33A0,A33A1,A33A1J11,A3561,A3600,A3850,A3850Dongle,A3871,A3872,A3873,A3874,A3874X,A3875,A3876,A3878,A3909
+2026-09-04 18:28:06.008385 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 14/22 ,A3910,A3913,A3926,A3926Z11,A3927,A3927EU,A3930,A3931,A3931XR,A3933,A3935,A3935W,A3936,A3937,A3939,A3939WEU,A3943,A3944,A3944EU,A3945,A3947,A3948,A3948A25,A3949
+2026-09-04 18:28:06.008392 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 15/22 ,A3949P25,A3949R50,A3951,A3952,A3953,A3954,A3955,A3957,A3958,A3959,A3959R50,A3961,A3968,A3969,A3982,A3982EU,A3983,A3983EU,A3992,A3992EU,A3993,A3993EU,A3994,D110
+2026-09-04 18:28:06.008399 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 16/22 1,D1105,D1200,D1202,D1202C,D1203,D1204,D1204-Box,D1205,D1206,D1402,D1404,D1406,D3200,D5100,D5103,Z2010,Z5180,Z6010 ,Z6110,Z6111\",\"id\":3051163,\"open_browser\
+2026-09-04 18:28:06.008405 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 17/22 ":1,\"message\":\"SUCCESS\",\"is_need\":true,\"type\":\"img\",\"url\":{\"web\":\"https:\\\/\\\/service.soundcore.com\\\/article-description\\\/How-to-Register-Y
+2026-09-04 18:28:06.008416 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 18/22 our-E-Warranty-Card-in-the-Soundcore-App?device_sn=3949E7BDE52DB6F4&ref=search&terminal_id=1BCD1762-E670-4625-93C5-BD4607822125&user_id=\",\"app\":\"\",\"share\
+2026-09-04 18:28:06.008423 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 19/22 ":\"\"}}","module":"POP","product_code":"A3949","device_id":"","time":"1788571683","mac":"F4:B6:2D:E5:BD:E7","sn":"3949000000000000","type":"1","name":"APP_POP_
+2026-09-04 18:28:06.008430 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 20/22 REQUEST_SUCCESS"},{"value_string":"{\"type\":\"img\",\"id\":\"3051163\"}","module":"POP","product_code":"A3949","device_id":"","time":"1788571683","mac":"F4:B6:
+2026-09-04 18:28:06.008437 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 21/22 2D:E5:BD:E7","sn":"3949000000000000","type":"1","name":"APP_POP_UP_SUCCESS"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_mo
+2026-09-04 18:28:06.008444 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #47 seg 22/22 del":"iPhone18,5","uuid":"1BCD1762-E670-4625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:06.008455 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #47 END
+2026-09-04 18:28:34.001764 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #48 src=json url=(none) len=1338 score=2 BEGIN
+2026-09-04 18:28:34.001786 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #48 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":1509037820,"event":"$AppClick","time":1788571714001,"identities":{"$identity_idfv":"4C63CC30-
+2026-09-04 18:28:34.001810 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #48 seg 2/9 EFC0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F-4AAB-A276-0
+2026-09-04 18:28:34.001839 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #48 seg 3/9 1988F6459F5"},"lib":{"$lib_method":"autoTrack","$lib_version":"4.8.3","$lib":"iOS","$lib_detail":"SoundCore.SCA3948MainViewController######","$app_version":"5.0
+2026-09-04 18:28:34.001847 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #48 seg 4/9 .02"},"properties":{"$os":"iOS","$screen_width":390,"$app_version":"5.0.02","country":"US","$element_type":"UIButton","sn":"3949E7BDE52DB6F4","is_secret":false,
+2026-09-04 18:28:34.001853 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #48 seg 5/9 "$is_first_day":true,"$model":"iPhone18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$network_type":"WI
+2026-09-04 18:28:34.001860 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #48 seg 6/9 FI","firmware_version":"14.43","device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$app_name":"soundcore","$wifi":true,"$timezone_offset":420,"mac":"F4:B6:2D:E5
+2026-09-04 18:28:34.001867 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #48 seg 7/9 :BD:E7","app_line":"SoundCore","$referrer_title":"P20i","$screen_height":844,"$lib_method":"autoTrack","$screen_name":"SoundCore.SCA3948MainViewController","$li
+2026-09-04 18:28:34.001874 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #48 seg 8/9 b_version":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},"distinct_
+2026-09-04 18:28:34.001883 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #48 seg 9/9 id":"25175005-856F-4AAB-A276-01988F6459F5","type":"track"}
+2026-09-04 18:28:34.001890 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #48 END
+2026-09-04 18:28:34.001897 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 1338 -> 1338 bytes
+2026-09-04 18:28:34.002011 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #49 src=json-mod url=(none) len=1338 score=2 BEGIN
+2026-09-04 18:28:34.002021 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #49 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":1509037820,"event":"$AppClick","time":1788571714001,"identities":{"$identity_idfv":"4C63CC30-
+2026-09-04 18:28:34.002033 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #49 seg 2/9 EFC0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F-4AAB-A276-0
+2026-09-04 18:28:34.002040 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #49 seg 3/9 1988F6459F5"},"lib":{"$lib_method":"autoTrack","$lib_version":"4.8.3","$lib":"iOS","$lib_detail":"SoundCore.SCA3948MainViewController######","$app_version":"5.0
+2026-09-04 18:28:34.002047 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #49 seg 4/9 .02"},"properties":{"$os":"iOS","$screen_width":390,"$app_version":"5.0.02","country":"US","$element_type":"UIButton","sn":"3949000000000000","is_secret":false,
+2026-09-04 18:28:34.002056 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #49 seg 5/9 "$is_first_day":true,"$model":"iPhone18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$network_type":"WI
+2026-09-04 18:28:34.002062 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #49 seg 6/9 FI","firmware_version":"14.42","device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$app_name":"soundcore","$wifi":true,"$timezone_offset":420,"mac":"F4:B6:2D:E5
+2026-09-04 18:28:34.002069 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #49 seg 7/9 :BD:E7","app_line":"SoundCore","$referrer_title":"P20i","$screen_height":844,"$lib_method":"autoTrack","$screen_name":"SoundCore.SCA3948MainViewController","$li
+2026-09-04 18:28:34.002076 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #49 seg 8/9 b_version":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},"distinct_
+2026-09-04 18:28:34.002083 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #49 seg 9/9 id":"25175005-856F-4AAB-A276-01988F6459F5","type":"track"}
+2026-09-04 18:28:34.002090 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #49 END
+2026-09-04 18:28:34.003305 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #50 src=json url=(none) len=1322 score=2 BEGIN
+2026-09-04 18:28:34.003345 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #50 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":67989269,"event":"SC_MARKETING_CLICK","time":1788571714001,"identities":{"$identity_idfv":"4C
+2026-09-04 18:28:34.003378 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #50 seg 2/9 63CC30-EFC0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F-4AAB
+2026-09-04 18:28:34.003388 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #50 seg 3/9 -A276-01988F6459F5"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$screen_width":390,"but
+2026-09-04 18:28:34.003409 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #50 seg 4/9 ton_name":"close","$app_version":"5.0.02","task_id":3051163,"country":"US","is_secret":false,"sn":"3949E7BDE52DB6F4","$is_first_day":true,"$model":"iPhone18,5",
+2026-09-04 18:28:34.003416 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #50 seg 5/9 "$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","requirement_id":194,"$network_type":"WIFI","firmware_version"
+2026-09-04 18:28:34.003423 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #50 seg 6/9 :"14.43","$app_name":"soundcore","$wifi":true,"device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$timezone_offset":420,"mac":"F4:B6:2D:E5:BD:E7","app_line":"So
+2026-09-04 18:28:34.003430 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #50 seg 7/9 undCore","$referrer_title":"P20i","$screen_height":844,"track_sign":"aSC_MARKETING.b483.d485.CLICK.SC_MARKETING_CLICK","$lib_method":"code","$lib_version":"4.8.
+2026-09-04 18:28:34.003441 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #50 seg 8/9 3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},"distinct_id":"25175005-85
+2026-09-04 18:28:34.003448 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #50 seg 9/9 6F-4AAB-A276-01988F6459F5","type":"track"}
+2026-09-04 18:28:34.003473 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #50 END
+2026-09-04 18:28:34.003513 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 1322 -> 1322 bytes
+2026-09-04 18:28:34.003544 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #51 src=json-mod url=(none) len=1322 score=2 BEGIN
+2026-09-04 18:28:34.003552 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #51 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":67989269,"event":"SC_MARKETING_CLICK","time":1788571714001,"identities":{"$identity_idfv":"4C
+2026-09-04 18:28:34.003558 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #51 seg 2/9 63CC30-EFC0-4192-B13A-5A331BF2E232","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E7BDE52DB6F4","$identity_anonymous_id":"25175005-856F-4AAB
+2026-09-04 18:28:34.003580 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #51 seg 3/9 -A276-01988F6459F5"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$screen_width":390,"but
+2026-09-04 18:28:34.003601 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #51 seg 4/9 ton_name":"close","$app_version":"5.0.02","task_id":3051163,"country":"US","is_secret":false,"sn":"3949000000000000","$is_first_day":true,"$model":"iPhone18,5",
+2026-09-04 18:28:34.003626 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #51 seg 5/9 "$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","requirement_id":194,"$network_type":"WIFI","firmware_version"
+2026-09-04 18:28:34.003634 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #51 seg 6/9 :"14.42","$app_name":"soundcore","$wifi":true,"device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$timezone_offset":420,"mac":"F4:B6:2D:E5:BD:E7","app_line":"So
+2026-09-04 18:28:34.003664 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #51 seg 7/9 undCore","$referrer_title":"P20i","$screen_height":844,"track_sign":"aSC_MARKETING.b483.d485.CLICK.SC_MARKETING_CLICK","$lib_method":"code","$lib_version":"4.8.
+2026-09-04 18:28:34.003681 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #51 seg 8/9 3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},"distinct_id":"25175005-85
+2026-09-04 18:28:34.003688 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #51 seg 9/9 6F-4AAB-A276-01988F6459F5","type":"track"}
+2026-09-04 18:28:34.003694 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #51 END
+2026-09-04 18:28:34.003702 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #52 src=json url=(none) len=423 score=2 BEGIN
+2026-09-04 18:28:34.003713 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #52 seg 1/3 {"events":[{"value_string":"3051163","module":"POP","time":"1788571714","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949E7BDE52DB6F4",
+2026-09-04 18:28:34.003720 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #52 seg 2/3 "type":"1","name":"APP_POP_IMG_NO"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4
+2026-09-04 18:28:34.003726 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #52 seg 3/3 625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:34.003733 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #52 END
+2026-09-04 18:28:34.003740 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY MODIFY 423 -> 423 bytes
+2026-09-04 18:28:34.003747 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #53 src=json-mod url=(none) len=423 score=2 BEGIN
+2026-09-04 18:28:34.003754 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #53 seg 1/3 {"events":[{"value_string":"3051163","module":"POP","time":"1788571714","device_id":"","mac":"F4:B6:2D:E5:BD:E7","product_code":"A3949","sn":"3949000000000000",
+2026-09-04 18:28:34.003763 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #53 seg 2/3 "type":"1","name":"APP_POP_IMG_NO"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4
+2026-09-04 18:28:34.003769 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #53 seg 3/3 625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:34.003775 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #53 END
+2026-09-04 18:28:35.839911 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #54 src=json url=(none) len=423 score=2 BEGIN
+2026-09-04 18:28:35.839976 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #54 seg 1/3 {"events":[{"value_string":"3051163","module":"POP","product_code":"A3949","device_id":"","time":"1788571714","mac":"F4:B6:2D:E5:BD:E7","sn":"3949000000000000",
+2026-09-04 18:28:35.840009 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #54 seg 2/3 "type":"1","name":"APP_POP_IMG_NO"}],"country":"US","sys_type":"iOS","http_user_agent":"soundcore-iOS-5.0.02","phone_model":"iPhone18,5","uuid":"1BCD1762-E670-4
+2026-09-04 18:28:35.840021 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #54 seg 3/3 625-93C5-BD4607822125","user_id":"","phone_name":"iPhone","sys_version":"26.5.1","phone_brand":"Apple"}
+2026-09-04 18:28:35.840058 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #54 END
+2026-09-04 18:28:35.840140 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #55 src=json url=(none) len=1366 score=2 BEGIN
+2026-09-04 18:28:35.840205 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #55 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":1509037820,"event":"$AppClick","time":1788571714001,"identities":{"$identity_idfv":"4C63CC30-
+2026-09-04 18:28:35.840235 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #55 seg 2/9 EFC0-4192-B13A-5A331BF2E232","$identity_anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591||3949E
+2026-09-04 18:28:35.840247 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #55 seg 3/9 7BDE52DB6F4"},"lib":{"$lib_detail":"SoundCore.SCA3948MainViewController######","$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"autoTr
+2026-09-04 18:28:35.840257 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #55 seg 4/9 ack"},"properties":{"$os":"iOS","$screen_width":390,"$app_version":"5.0.02","country":"US","$element_type":"UIButton","sn":"3949000000000000","is_secret":false,
+2026-09-04 18:28:35.840267 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #55 seg 5/9 "$is_first_day":true,"$model":"iPhone18,5","$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$timezone_offset":
+2026-09-04 18:28:35.840277 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #55 seg 6/9 420,"$network_type":"WIFI","firmware_version":"14.42","device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","$app_name":"soundcore","$wifi":true,"mac":"F4:B6:2D:E5
+2026-09-04 18:28:35.840287 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #55 seg 7/9 :BD:E7","app_line":"SoundCore","$referrer_title":"P20i","$screen_height":844,"$lib_method":"autoTrack","$screen_name":"SoundCore.SCA3948MainViewController","$li
+2026-09-04 18:28:35.840296 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #55 seg 8/9 b_version":"4.8.3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},"distinct_
+2026-09-04 18:28:35.840306 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #55 seg 9/9 id":"25175005-856F-4AAB-A276-01988F6459F5","type":"track","_flush_time":1788571715839}
+2026-09-04 18:28:35.840318 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #55 END
+2026-09-04 18:28:35.840496 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #56 src=json url=(none) len=1350 score=2 BEGIN
+2026-09-04 18:28:35.840511 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #56 seg 1/9 {"anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","_track_id":67989269,"event":"SC_MARKETING_CLICK","time":1788571714001,"identities":{"$identity_idfv":"4C
+2026-09-04 18:28:35.840522 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #56 seg 2/9 63CC30-EFC0-4192-B13A-5A331BF2E232","$identity_anonymous_id":"25175005-856F-4AAB-A276-01988F6459F5","identity_deviceid_sn":"FE6DBD47-C145-436E-BFD7-7894A0C04591
+2026-09-04 18:28:35.840532 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #56 seg 3/9 ||3949E7BDE52DB6F4"},"lib":{"$lib_version":"4.8.3","$lib":"iOS","$app_version":"5.0.02","$lib_method":"code"},"properties":{"$os":"iOS","$screen_width":390,"but
+2026-09-04 18:28:35.840543 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #56 seg 4/9 ton_name":"close","$app_version":"5.0.02","task_id":3051163,"country":"US","is_secret":false,"sn":"3949000000000000","$is_first_day":true,"$model":"iPhone18,5",
+2026-09-04 18:28:35.840553 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #56 seg 5/9 "$device_id":"4C63CC30-EFC0-4192-B13A-5A331BF2E232","uuid":"FE6DBD47-C145-436E-BFD7-7894A0C04591","requirement_id":194,"$timezone_offset":420,"$network_type":"W
+2026-09-04 18:28:35.840563 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #56 seg 6/9 IFI","firmware_version":"14.42","$app_name":"soundcore","$wifi":true,"device_id":"FE6DBD47-C145-436E-BFD7-7894A0C04591","mac":"F4:B6:2D:E5:BD:E7","app_line":"So
+2026-09-04 18:28:35.840573 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #56 seg 7/9 undCore","$referrer_title":"P20i","$screen_height":844,"track_sign":"aSC_MARKETING.b483.d485.CLICK.SC_MARKETING_CLICK","$lib_method":"code","$lib_version":"4.8.
+2026-09-04 18:28:35.840583 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #56 seg 8/9 3","$os_version":"26.5.1","$lib":"iOS","$manufacturer":"Apple","product_code":"A3949","$app_id":"com.oceanwing.SoundCore.G8AW4BQ7RV"},"distinct_id":"25175005-85
+2026-09-04 18:28:35.840594 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY #56 seg 9/9 6F-4AAB-A276-01988F6459F5","type":"track","_flush_time":1788571715840}
+2026-09-04 18:28:35.840604 SoundCore{scbody.dylib}[27344] <NOTICE>: SCBODY CAPTURE #56 END

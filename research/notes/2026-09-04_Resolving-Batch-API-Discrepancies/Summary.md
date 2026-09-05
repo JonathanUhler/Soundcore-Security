@@ -127,9 +127,11 @@ network path is declared fully dead.
 
 ## Outcome And Future Directions
 
-The API path to the image is exhausted. The transport is fully broken and understood, but the batch
-check is architecturally incapable of returning a URL for a device already on the latest firmware
-with no newer build published, and it is the only firmware endpoint. The three discrepancies were
+The API path looked exhausted at the time of writing, but that was later disproven, see the version
+spoof addendum below. The batch check does return a URL when a package exists and the reported
+version is lowered below it. What holds is that the transport is fully broken and understood, that
+the batch check is the only firmware endpoint, and that a device genuinely on the latest build with
+no newer package is offered nothing. The three discrepancies were
 red herrings for firmware delivery, though the anonymous id and tamper strip are worth keeping in
 the disclosure writeup as privacy and anti analysis findings.
 
@@ -157,10 +159,11 @@ transport, and the same schema. The real check sends two items, the buds at `01.
 lastPackage:null` for both. A later single bud check repeats it. So a device with a real update
 history, currently on the latest, is offered nothing, exactly like the P20i.
 
-This closes the last doubt. The batch check is server inventory gated for every product, not a P20i
-quirk and not a client controllable pin. The A30 firmware body carries only `sn`, `version`,
-`product_code`, `product_component`, and `relation_sn`, no MAC, no UUID, no account, so there is no
-field to move that changes the answer.
+This looked like it closed the last doubt, but a30_2 later showed otherwise, see the version spoof
+addendum below. The check is inventory gated, but the reported `version` is a client field that does
+move it. The A30 was simply on the latest here, so nothing newer existed to offer. The firmware body
+carries only `sn`, `version`, `product_code`, `product_component`, and `relation_sn`, no MAC, no
+UUID, no account, so the version is the lever.
 
 Other observations from the A30 capture, none of which are the device image.
 
@@ -193,3 +196,55 @@ telemetry events, and never in a firmware or upgrade body. It is also distinct f
 identifier in the log, the SA `$device_id` idfv, the `device_id`, the `terminal-id`, and the SA
 `uuid`. So it is a separate identifier, most likely the BLE peripheral identifier, that the app only
 ever emits in this encoded telemetry form. It is not a firmware pin.
+
+## Addendum, A Version Spoof Yields A Firmware URL On The A30
+
+The a30_1 conclusion, that the check has no client field that moves it, was wrong. A second A30 run,
+`logs/a30_2.log`, rewrote only the buds version, `01.07` to `01.05`, a real prior version from
+Reddit, kept the real serial, and left everything else untouched. The check returned
+`needUpdate:true` with a full `lastPackage`, the first positive firmware response of the project.
+
+The recipe, confirmed from the log. The real buds serial `13017CE9136B47AC` was preserved, the
+version was lowered by `rewrite_body` across telemetry and check together, and there was no serial,
+MAC, or anonymous id scrub. The synthetic anon `7F3C1A2B...` never appears and the real anon is
+present throughout, so the anon scrub was off. The case, `D1301S-Box` serial `1301S11288A13E97C` on
+`01.01`, was left real and returned `needUpdate:false`, so only the buds, claiming to be behind,
+were offered a package.
+
+The `lastPackage` schema, capture `#81`.
+
+```json
+{"id":"8e885caf-e6e2-4607-8877-ccd91502bc63","product_code":"D1301S","product_name":"Sleep A30 Special","product_component":"ALL","version":"1.07","is_forced":false,"can_return":true,"md5":"cdca27d1f975fac8609ecaff70ab7fbc","change_log":"1. Optimized tap controls\n2. Bug fixes and other improvements","url":"https://d2htfo7ft368vg.cloudfront.net/upgrade/prod/1775099301461220_D1301S_ota_01.07_release_20260304162801.bin","size":1313572,"update_time":1776850177,"upgrade_scheme":0,"ext":{"file_name":"D1301S_ota_01.07_release_20260304162801.bin","base_version":"","require_box_version":"","instruction_set":[],"ios_upgrade_time":5,"android_upgrade_time":5},"force_option":"NONE"}
+```
+
+The binary. Downloaded, md5 verified against the response, stored in `a30_firmware/`. Size `1313572`
+bytes. `base_version` and `instruction_set` are empty, so it is a full image, not a delta. A
+`binwalk -E` shows entropy near `0.97` throughout, so it is encrypted. The image is in hand but not
+yet readable.
+
+The URL is not guessable. The format is
+`upgrade/prod/{16 digit microsecond upload ts}_{product}_ota_{version}_release_{YYYYMMDDHHMMSS}.bin`.
+Two independent high entropy fields, the microsecond upload timestamp and the release datetime, put
+it out of brute force range against a rate limited CDN. The API is the only practical source, and it
+hands over the exact URL when a package exists.
+
+## Addendum, The Corrected P20i Status
+
+The P20i is not confirmed end of life. Every P20i version lowering test in the logs also synthesized
+the serial. The value `14.42` was always paired with `3949000000000000`, and the real serial
+`3949E7BDE52DB6F4` was only ever sent with the true `14.43`. So the P20i has never had the A30
+winning recipe, real serial with version only. A synthetic serial the server has never seen is a
+confound, it may fail closed with no device record.
+
+The operator re-tested the P20i with a version only rewrite and still got no URL, but did not have a
+real prior P20i version to claim, so the test is inconclusive. The next step is to find a real prior
+P20i version online, then claim it with the real serial and nothing else changed. If a low real
+version still returns `needUpdate:false`, end of life is then well supported. If it returns a
+`lastPackage`, the P20i image is in reach, encrypted like the A30.
+
+## Addendum, Scope Extended To The A30
+
+The A30, `D1301S`, is owned hardware on the same API, and is now in scope alongside the P20i. It is
+the first device to yield a firmware image, so it is the stronger near term target for the
+decryption and image analysis work. The image encryption, Jieli style, is the next wall for both
+devices.
