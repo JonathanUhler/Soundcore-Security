@@ -82,6 +82,9 @@ static const bool INJECT_MATCHED = false;
 static const char *VERSION_FROM = "14.43";
 static const char *VERSION_TO = "14.42";
 
+static const char *SN_FROM = "3949E7BDE52DB6F4";
+static const char *SN_TO = "3949000000000000";
+
 /* OTA field markers, same set scjson used. firmwareList and firmware_list are the
  * definitive wrapper keys, the rest are item fields from the SCOTAMultipleItemStruct
  * reflection metadata in both key styles. The quoted forms carry their quotes so
@@ -242,6 +245,7 @@ static NSData *inject_matched(NSData *body) {
  * nothing changed. The firmware_version replacement runs first, and the version
  * replacement carries a leading quote, so it does not match inside firmware_version.
  * The app re-encrypts, so the replacement need not preserve length. */
+/*
 static NSData *rewrite_version(NSData *body) {
     if (body == nil || VERSION_TO[0] == '\0') {
         return nil;
@@ -271,6 +275,42 @@ static NSData *rewrite_version(NSData *body) {
     }
     return [out dataUsingEncoding:NSUTF8StringEncoding];
 }
+*/
+static NSData *rewrite_version(NSData *body) {
+    if (body == nil || VERSION_TO[0] == '\0') {
+        return nil;
+    }
+    size_t n = (size_t)body.length;
+    const char *b = (const char *)body.bytes;
+    if (b == NULL || n < 8 || n > MAX_BODY) {
+        return nil;
+    }
+    NSString *s = [[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
+    if (s == nil) {
+        return nil;
+    }
+    NSString *version_from = [NSString stringWithUTF8String:VERSION_FROM];
+    NSString *version_to = [NSString stringWithUTF8String:VERSION_TO];
+    NSString *sn_from = [NSString stringWithUTF8String:SN_FROM];
+    NSString *sn_to = [NSString stringWithUTF8String:SN_TO];
+    NSString *out = s;
+    out = [out stringByReplacingOccurrencesOfString:
+                   [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", version_from]
+                                         withString:
+                   [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", version_to]];
+    out = [out stringByReplacingOccurrencesOfString:
+                   [NSString stringWithFormat:@"\"version\":\"%@\"", version_from]
+                                         withString:
+                   [NSString stringWithFormat:@"\"version\":\"%@\"", version_to]];
+    out = [out stringByReplacingOccurrencesOfString:
+                   [NSString stringWithFormat:@"\"sn\":\"%@\"", sn_from]
+                                         withString:
+                   [NSString stringWithFormat:@"\"sn\":\"%@\"", sn_to]];
+    if ([out isEqualToString:s]) {
+        return nil;
+    }
+    return [out dataUsingEncoding:NSUTF8StringEncoding];
+}
 
 /* Swizzle of +[NSJSONSerialization dataWithJSONObject:options:error:]. Calls the
  * original by saved IMP, never by objc_msgSend, so there is no recursion. It applies
@@ -290,7 +330,7 @@ static NSData *hook_dataWithJSONObject(id self, SEL _cmd, id obj, NSUInteger opt
                 mod = m;
             }
         }
-        NSData *v = rewrite_version(mod);
+        NSData *v = rewrite_version_and_sn(mod);
         if (v != nil) {
             mod = v;
         }
