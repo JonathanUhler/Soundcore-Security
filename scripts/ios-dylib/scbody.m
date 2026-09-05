@@ -34,6 +34,11 @@
  *     parses the plaintext here. Capturing the input reads the decrypted response,
  *     needUpdate and any lastPackage url, with no key needed.
  *
+ * The MONITOR_ONLY flag at the top forces strictly read only operation. It makes no
+ * edits at all, no tamper strip, no value scrub, no matched inject, and it captures
+ * every body it sees by bypassing the marker score filter, so nothing is missed. It
+ * overrides every active test below. Use it to survey a new device before rewriting.
+ *
  * Mostly the hooks only observe, but the serialization hook can also modify the
  * outgoing body before the app encrypts and signs it, for the active tests set at the
  * top of the file. strip_tamper_events drops the reinforcement SDK's three tamper
@@ -69,6 +74,13 @@ static unsigned g_capture_id;
  * and the capture counter are guarded. A logged body holds the lock so its chunk
  * lines cannot interleave with another capture in the unified log. */
 static os_unfair_lock g_lock = OS_UNFAIR_LOCK_INIT;
+
+/* Master switch, monitor mode. When true the library is strictly read only. It makes no
+ * edits at all, no tamper event strip, no value scrub, no matched inject, and it captures
+ * every body it sees, bypassing the marker score filter so nothing is missed. This
+ * overrides all the active test flags below. Use it to survey a new device, like the
+ * Sleep A30, D1301S, and see what differs before deciding what to rewrite. */
+static const bool MONITOR_ONLY = true;
 
 /* Active test one, the matched flag. Tested and had no effect on the response, the
  * server ignores it for this device, so it is off. When true the serialization hook
@@ -224,7 +236,7 @@ static void consider(NSData *data, const char *source, const char *url, bool for
     }
     bool definitive = false;
     int score = marker_score(b, n, &definitive);
-    if (!force && !definitive && score < 2) {
+    if (!force && !MONITOR_ONLY && !definitive && score < 2) {
         return;
     }
     uint32_t h = hash_bytes(b, n);
@@ -376,34 +388,39 @@ static json_imp_t g_orig_json;
 
 static NSData *hook_dataWithJSONObject(id self, SEL _cmd, id obj, NSUInteger opt, NSError **err) {
     /* Object graph edit before serialization, drop the anti tamper telemetry events so
-     * the serialized body the app encrypts never carries a tamper flag. */
+     * the serialized body the app encrypts never carries a tamper flag. Skipped whole in
+     * monitor mode, where the library never edits anything. */
     id to_serialize = obj;
-    @try {
-        id cleaned = strip_tamper_events(obj);
-        if (cleaned != nil) {
-            to_serialize = cleaned;
+    if (!MONITOR_ONLY) {
+        @try {
+            id cleaned = strip_tamper_events(obj);
+            if (cleaned != nil) {
+                to_serialize = cleaned;
+            }
+        } @catch (__unused NSException *e) {
         }
-    } @catch (__unused NSException *e) {
     }
     NSData *result = g_orig_json(self, _cmd, to_serialize, opt, err);
     @try {
         consider(result, to_serialize == obj ? "json" : "json-strip", NULL, to_serialize != obj);
-        NSData *mod = result;
-        if (INJECT_MATCHED) {
-            NSData *m = inject_matched(mod);
-            if (m != nil) {
-                mod = m;
+        if (!MONITOR_ONLY) {
+            NSData *mod = result;
+            if (INJECT_MATCHED) {
+                NSData *m = inject_matched(mod);
+                if (m != nil) {
+                    mod = m;
+                }
             }
-        }
-        NSData *v = rewrite_body(mod);
-        if (v != nil) {
-            mod = v;
-        }
-        if (mod != result) {
-            os_log(g_log, "%{public}s MODIFY %lu -> %lu bytes", TAG,
-                   (unsigned long)result.length, (unsigned long)mod.length);
-            consider(mod, "json-mod", NULL, true);
-            return mod;                 /* the app encrypts and signs this instead */
+            NSData *v = rewrite_body(mod);
+            if (v != nil) {
+                mod = v;
+            }
+            if (mod != result) {
+                os_log(g_log, "%{public}s MODIFY %lu -> %lu bytes", TAG,
+                       (unsigned long)result.length, (unsigned long)mod.length);
+                consider(mod, "json-mod", NULL, true);
+                return mod;             /* the app encrypts and signs this instead */
+            }
         }
     } @catch (__unused NSException *e) {
     }
@@ -553,7 +570,8 @@ static void swizzle_instance_method(const char *cls_name, SEL sel, IMP repl, IMP
 __attribute__((constructor))
 static void scbody_init(void) {
     g_log = os_log_create("com.soundcore.research", "body");
-    os_log(g_log, "%{public}s loaded, installing swizzles", TAG);
+    os_log(g_log, "%{public}s loaded, installing swizzles, mode=%{public}s", TAG,
+           MONITOR_ONLY ? "MONITOR (read only)" : "ACTIVE (rewrites on)");
 
     swizzle_class_method("NSJSONSerialization",
                          @selector(dataWithJSONObject:options:error:),
