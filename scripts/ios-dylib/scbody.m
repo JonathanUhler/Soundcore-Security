@@ -85,6 +85,11 @@ static const char *VERSION_TO = "14.42";
 static const char *SN_FROM = "3949E7BDE52DB6F4";
 static const char *SN_TO = "3949000000000000";
 
+const const char *MAC_UPPER_FROM = "F4:B6:2D:E5:BD:E7";
+const const char *MAC_UPPER_TO = "00:00:00:00:00:00";
+const const char *MAC_LOWER_FROM = "f4:b6:2d:e5:bd:e7";
+const const char *MAC_LOWER_TO = "00:00:00:00:00:00";
+
 /* OTA field markers, same set scjson used. firmwareList and firmware_list are the
  * definitive wrapper keys, the rest are item fields from the SCOTAMultipleItemStruct
  * reflection metadata in both key styles. The quoted forms carry their quotes so
@@ -293,6 +298,10 @@ static NSData *rewrite_version_and_sn(NSData *body) {
     NSString *version_to = [NSString stringWithUTF8String:VERSION_TO];
     NSString *sn_from = [NSString stringWithUTF8String:SN_FROM];
     NSString *sn_to = [NSString stringWithUTF8String:SN_TO];
+    NSString *mac_upper_from = [NSString stringWithUTF8String:MAC_UPPER_FROM];
+    NSString *mac_upper_to = [NSString stringWithUTF8String:MAC_UPPER_TO];
+    NSString *mac_lower_from = [NSString stringWithUTF8String:MAC_LOWER_FROM];
+    NSString *mac_lower_to = [NSString stringWithUTF8String:MAC_LOWER_TO];
     NSString *out = s;
     out = [out stringByReplacingOccurrencesOfString:
                    [NSString stringWithFormat:@"\"firmware_version\":\"%@\"", version_from]
@@ -310,6 +319,14 @@ static NSData *rewrite_version_and_sn(NSData *body) {
                    [NSString stringWithFormat:@"\"device_sn\":\"%@\"", sn_from]
                                          withString:
                    [NSString stringWithFormat:@"\"device_sn\":\"%@\"", sn_to]];
+    out = [out stringByReplacingOccurrencesOfString:
+                   [NSString stringWithFormat:@"\"mac\":\"%@\"", mac_upper_from]
+                                         withString:
+                   [NSString stringWithFormat:@"\"mac\":\"%@\"", mac_upper_to]];
+    out = [out stringByReplacingOccurrencesOfString:
+                   [NSString stringWithFormat:@"\"device_mac\":\"%@\"", mac_lower_from]
+                                         withString:
+                   [NSString stringWithFormat:@"\"device_mac\":\"%@\"", mac_lower_to]];
     if ([out isEqualToString:s]) {
         return nil;
     }
